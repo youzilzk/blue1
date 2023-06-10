@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Hello World"
+        android:text="欢迎使用本软件\n有技术问题请联系1290240016@qq.com"
         android:textColor="@android:color/black"
         android:textSize="24sp" />
 </FrameLayout>

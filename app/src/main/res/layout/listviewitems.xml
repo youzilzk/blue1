@@ -35,7 +35,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/img"
+        android:id="@+id/state"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:background="@drawable/state_gray"

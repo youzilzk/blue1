@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     private fun initView() {
         mTabRadioGroup = findViewById(R.id.tabs_rg)
         mFragmentSparseArray = SparseArray<Fragment>()
-        mFragmentSparseArray!!.append(R.id.contact_tab, HomeFragment.newInstance("首页"))
+        mFragmentSparseArray!!.append(R.id.home_tab, HomeFragment.newInstance("首页"))
         mFragmentSparseArray!!.append(R.id.settings_tab, SettingFragment.newInstance("设置"))
         mTabRadioGroup!!.setOnCheckedChangeListener { group, checkedId -> // 具体的fragment切换逻辑可以根据应用调整，例如使用show()/hide()
             supportFragmentManager.beginTransaction().replace(
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         }
         // 默认显示第一个
         supportFragmentManager.beginTransaction().add(
-            R.id.fragment_container, mFragmentSparseArray!![R.id.contact_tab]
+            R.id.fragment_container, mFragmentSparseArray!![R.id.home_tab]
         ).commit()
 
         findViewById<ImageView>(R.id.sign_iv).setOnClickListener {

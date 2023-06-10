@@ -20,7 +20,7 @@
         android:orientation="horizontal">
 
         <RadioButton
-            android:id="@+id/contact_tab"
+            android:id="@+id/home_tab"
             style="@style/Custom.TabRadioButton"
             android:drawableTop="@drawable/tab_contact_selector"
             android:text="首页" />
