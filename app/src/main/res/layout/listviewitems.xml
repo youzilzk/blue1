@@ -34,10 +34,11 @@
 
     </LinearLayout>
 
-    <TextView
+    <ImageView
         android:id="@+id/state"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:background="@drawable/state_gray"
-        android:gravity="center" />
+        android:gravity="center"
+        android:contentDescription="设备在线状态,gray-离线,green-在线" />
 </LinearLayout>

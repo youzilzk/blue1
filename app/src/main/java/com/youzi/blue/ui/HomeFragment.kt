@@ -79,10 +79,11 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
             //定义一个界面与数据的混合体,一个item代表一行记录
             val item: HashMap<String, Any> = HashMap()
             //一行记录，包含多个控件
-            item["deviceImage"] = R.drawable.ico
+            item["deviceImage"] = R.drawable.device_ico
             item["deviceName"] = "设备$i"
             item["description"] =
                 "俄国人为符合规范鹅嘎王菲和瑞特个人房屋我和如果文特人格奉化人提供服务和如果无法和各位$i"
+            item["state"] =R.drawable.state_green
             data.add(item)
         }
     }
@@ -94,8 +95,8 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
             context,
             data,  //data 不仅仅是数据，而是一个与界面耦合的数据混合体
             R.layout.listviewitems,
-            arrayOf<String>("deviceImage", "deviceName", "description"),
-            intArrayOf(R.id.device_image, R.id.device_name, R.id.description)
+            arrayOf<String>("deviceImage", "deviceName", "description","state"),
+            intArrayOf(R.id.device_image, R.id.device_name, R.id.description,R.id.state)
         )
         //foot设置优雅的分割线
         listView.setFooterDividersEnabled(true)

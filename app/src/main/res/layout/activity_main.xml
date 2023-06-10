@@ -22,7 +22,7 @@
         <RadioButton
             android:id="@+id/home_tab"
             style="@style/Custom.TabRadioButton"
-            android:drawableTop="@drawable/tab_contact_selector"
+            android:drawableTop="@drawable/ic_home_black_24dp"
             android:text="首页" />
 
         <View style="@style/Custom.TabRadioButton" />
