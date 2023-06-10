@@ -6,12 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".ui.SettingFragment">
 
-    <TextView
-        android:id="@+id/watch_01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/watch"
-        android:textColor="@android:color/black"
-        android:textSize="24sp" />
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 </FrameLayout>
