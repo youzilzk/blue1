@@ -20,9 +20,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-
+        <activity
+            android:name=".login.LoginActivity"
+            android:exported="true" />
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        />
+        <!--      注意！！！这里同时要把mainactivity的exported属性改为false 并删除<intent-filter>属性-->
         <activity
             android:name=".MainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".login.RegisterActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
