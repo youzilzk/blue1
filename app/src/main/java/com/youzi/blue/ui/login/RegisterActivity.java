@@ -1,6 +1,5 @@
-package com.youzi.blue.login;
+package com.youzi.blue.ui.login;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -9,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.youzi.blue.R;
 import com.youzi.blue.db.DBOpenHelper;
