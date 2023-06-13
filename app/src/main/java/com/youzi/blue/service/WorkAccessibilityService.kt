@@ -16,10 +16,14 @@ import androidx.lifecycle.MutableLiveData
 import com.youzi.blue.R
 import com.youzi.blue.utils.ItemViewTouchListener
 import com.youzi.blue.utils.Utils.isNull
+import io.netty.channel.Channel
 
 
 class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
     private lateinit var windowManager: WindowManager
+
+    lateinit var channel: Channel
+
     private var floatRootView: View? = null//悬浮窗View
     private val mLifecycleRegistry = LifecycleRegistry(this)
 
@@ -27,6 +31,7 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
     companion object {
         @SuppressLint("StaticFieldLeak")
         lateinit var instace: WorkAccessibilityService
+
         //无障碍服务运行状态
         var isAccessibilityRunning = MutableLiveData<Boolean>()
     }

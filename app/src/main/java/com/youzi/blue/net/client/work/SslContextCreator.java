@@ -2,7 +2,6 @@ package com.youzi.blue.net.client.work;
 
 import android.content.res.AssetManager;
 
-import com.youzi.blue.net.client.config.ClientProperties;
 import com.youzi.blue.net.client.manager.Manager;
 import com.youzi.blue.net.common.utils.LoggerFactory;
 
@@ -35,11 +34,7 @@ public class SslContextCreator {
 
     private static SSLContext initSSLContext() {
         log.info("Checking SSL configuration properties...");
-        final String jksPath = ClientProperties.getInstance().getSslJksPath();
-        if (jksPath == null || jksPath.isEmpty()) {
-            log.info("The keystore path is null or empty. The SSL context won't be initialized.");
-            return null;
-        }
+        final String jksPath = "test.bks";
         try {
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             if (keyStore == null) {
@@ -65,7 +60,7 @@ public class SslContextCreator {
     private static void initKeyStore(AssetManager manager, String jksPath) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
         log.info("read {}  and Initializing KeyStore...", jksPath);
         InputStream jksInputStream = manager.open(jksPath);
-        final String keyStorePassword = ClientProperties.getInstance().getSslKeyStorePassword();
+        final String keyStorePassword = "123456";
         final KeyStore ks = KeyStore.getInstance("BKS");
         ks.load(jksInputStream, keyStorePassword.toCharArray());
         keyStore = ks;

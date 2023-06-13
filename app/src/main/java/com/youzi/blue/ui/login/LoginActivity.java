@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,7 +19,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.youzi.blue.MainActivity;
 import com.youzi.blue.R;
 import com.youzi.blue.db.DBOpenHelper;
+import com.youzi.blue.utils.OkHttp;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,6 +29,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -99,21 +107,33 @@ public class LoginActivity extends AppCompatActivity {
                     //将适配器和测试的listview关联，我这里的listview叫test_text
                     test_text.setAdapter(simpleAdapter);
 
-                    //查到了用户 对比输入的密码与数据库的密码是否一致 如果相等跳转到主页面去
-                    if (etpassword.equals(dbpassword)) {
-                        Toast.makeText(LoginActivity.this, "登陆成功！", Toast.LENGTH_SHORT).show();
-                        //登录状态为已登录, 下次直接进入主页
-                        dbOpenHelper.updateLoginState(username, "1");
-                        //跳转到Mainactivity
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        //关闭登录页面
-                        LoginActivity.this.finish();
-                    } else {
-                        Toast.makeText(LoginActivity.this, "密码错误！", Toast.LENGTH_SHORT).show();
-                    }
+                    //登录
+                    OkHttp.getInstance().httpGet("", new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            Log.e("blue", "error");
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            String s = response.body().toString();
+
+                            if (s.equals("1")) {
+                                Toast.makeText(LoginActivity.this, "登陆成功！", Toast.LENGTH_SHORT).show();
+                                //登录状态为已登录, 下次直接进入主页
+                                dbOpenHelper.updateLoginState(username, "1");
+                                //跳转到Mainactivity
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                //关闭登录页面
+                                LoginActivity.this.finish();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "密码错误！", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
                 }
-                ;
             }
         });
     }

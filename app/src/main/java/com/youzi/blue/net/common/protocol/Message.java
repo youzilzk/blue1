@@ -11,7 +11,8 @@ public class Message {
     public enum TYPE {
         UNDEFINED(0),
         RELAY(1),
-        HEARTBEAT(2);
+        HEARTBEAT(2),
+        LINK(3);
         public final byte value;
 
         TYPE(int value) {
@@ -28,6 +29,7 @@ public class Message {
         }
 
     }
+
     /**
      * 消息类型
      */

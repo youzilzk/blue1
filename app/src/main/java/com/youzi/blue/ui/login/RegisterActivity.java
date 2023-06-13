@@ -1,9 +1,11 @@
 package com.youzi.blue.ui.login;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,11 +13,18 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.youzi.blue.MainActivity;
 import com.youzi.blue.R;
 import com.youzi.blue.db.DBOpenHelper;
+import com.youzi.blue.utils.OkHttp;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class RegisterActivity extends AppCompatActivity {
     private Button btn_register;
@@ -63,12 +72,29 @@ public class RegisterActivity extends AppCompatActivity {
                 } else if (!TextUtils.equals(et_password, et_confirm)) {
                     Toast.makeText(RegisterActivity.this, "密码不一致！", Toast.LENGTH_SHORT).show();
                 } else {
-                    //存储注册的用户名和密码 把账号密码存储进数据库
-                    dbOpenHelper.insertData(et_name, et_password);
-                    Toast.makeText(RegisterActivity.this, "注册成功！", Toast.LENGTH_SHORT).show();
+                    //注册
+                    OkHttp.getInstance().httpGet("", new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            Log.e("blue", "error");
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            String s = response.body().toString();
+
+                            if (s.equals("1")) {
+                                //存储注册的用户名和密码 把账号密码存储进数据库
+                                dbOpenHelper.insertData(et_name, et_password);
+                                Toast.makeText(RegisterActivity.this, "注册成功！", Toast.LENGTH_SHORT).show();
+                                //关闭注册页面 跳转到登录页面
+                                RegisterActivity.this.finish();
+                            } else {
+                                Toast.makeText(RegisterActivity.this, "注册失败！", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
-                //关闭注册页面 跳转到登录页面
-                RegisterActivity.this.finish();
             }
         });
     }
