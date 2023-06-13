@@ -16,9 +16,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.youzi.blue.MainActivity
 import com.youzi.blue.R
+import com.youzi.blue.db.DBOpenHelper
 import com.youzi.blue.service.ScreenRecordService
 import com.youzi.blue.service.WorkAccessibilityService
+import com.youzi.blue.ui.login.LoginActivity
 import com.youzi.blue.utils.Utils
 import kotlinx.android.synthetic.main.fragment_setting.*
 
@@ -76,6 +79,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
         super.onActivityCreated(savedInstanceState)
         bt_01.setOnClickListener(this)
         bt_02.setOnClickListener(this)
+        bt_03.setOnClickListener(this)
 
         if (Utils.isAccessibilityRunning(activity!!)) {
             bt_01.isEnabled = false
@@ -124,6 +128,15 @@ class SettingFragment : Fragment(), View.OnClickListener {
                     context?.unbindService(serviceConnection)
                     bt_02.text = "开始录屏"
                 }
+            }
+
+            bt_03 -> {
+                DBOpenHelper(context, "user.db", null, 1).updateLoginState("0")
+                //跳转到LoginActivity
+                val intent = Intent(activity, LoginActivity::class.java)
+                startActivity(intent)
+                //关闭主页面
+                activity?.finish()
             }
         }
     }

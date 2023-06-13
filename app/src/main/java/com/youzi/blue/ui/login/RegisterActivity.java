@@ -64,7 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, "密码不一致！", Toast.LENGTH_SHORT).show();
                 } else {
                     //存储注册的用户名和密码 把账号密码存储进数据库
-                    insertData(dbOpenHelper.getReadableDatabase(), et_name, et_password);
+                    dbOpenHelper.insertData(et_name, et_password);
                     Toast.makeText(RegisterActivity.this, "注册成功！", Toast.LENGTH_SHORT).show();
                 }
                 //关闭注册页面 跳转到登录页面
@@ -84,15 +84,6 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    //创建数据库的insert方法 插入数据方法
-    private void insertData(SQLiteDatabase readableDatabase, String username1, String password1) {
-        readableDatabase.delete("user", null, null);
-        ContentValues values = new ContentValues();
-        values.put("username", username1);
-        values.put("password", password1);
-        values.put("loginState", "0");
-        readableDatabase.insert("user", null, values);
-    }
 
     //重写onDestroy()方法
     @Override
