@@ -1,7 +1,9 @@
 package com.youzi.blue.utils;
 
 import android.util.Log;
+
 import java.io.IOException;
+
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Interceptor;
@@ -36,13 +38,25 @@ public class OkHttp {
     }
 
     public void httpGet(String url, final Callback callback) {
-        Request request = requestBuilder.url(url).build();
+        Request request = requestBuilder.url(url).get().build();
         okHttpClient.newCall(request).enqueue(callback);
     }
 
     public void httpPost(String urlString, FormBody formBody, Callback callback) {
         Request request = requestBuilder.url(urlString).method("POST", formBody).build();
         okHttpClient.newCall(request).enqueue(callback);
+    }
+
+    public String httpGet(String url) throws IOException {
+        Request request = requestBuilder.url(url).get().build();
+        Response response = okHttpClient.newCall(request).execute();
+        return new String(response.body().bytes());
+    }
+
+    public String httpPost(String urlString, FormBody formBody) throws IOException {
+        Request request = requestBuilder.url(urlString).method("POST", formBody).build();
+        Response response = okHttpClient.newCall(request).execute();
+        return new String(response.body().bytes());
     }
 
     /**

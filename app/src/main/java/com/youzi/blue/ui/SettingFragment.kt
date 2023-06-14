@@ -69,8 +69,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_setting, container, false)
@@ -133,7 +132,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
             }
 
             bt_03 -> {
-                DBOpenHelper(context, "user.db", null, 1).updateLoginState("0")
+                DBOpenHelper(context, "user.db", null, 1).deleteUserInfo()
                 //跳转到LoginActivity
                 val intent = Intent(activity, LoginActivity::class.java)
                 startActivity(intent)
@@ -145,8 +144,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
 
     private fun startBaseService() {
         if (!Utils.hasBasePermission(activity!!)) {
-            Toast.makeText(context, "请先打开麦克风和存储权限！", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(context, "请先打开麦克风和存储权限！", Toast.LENGTH_SHORT).show()
             return
         }
         Utils.checkAccessibilityPermission(activity!!)
@@ -188,8 +186,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
         val metrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
         screenRecordService.setConfig(
-            metrics.widthPixels,
-            metrics.heightPixels
+            metrics.widthPixels, metrics.heightPixels
         )
     }
 
@@ -203,17 +200,13 @@ class SettingFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1101) {
             if (grantResults.size != 0 && (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED)) {
                 Toast.makeText(
-                    context,
-                    "请设置必须的应用权限，否则将会导致运行异常！",
-                    Toast.LENGTH_SHORT
+                    context, "请设置必须的应用权限，否则将会导致运行异常！", Toast.LENGTH_SHORT
                 ).show()
             } else if (grantResults.size != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 Log.i("", "授权成功")

@@ -1,5 +1,6 @@
 package com.youzi.blue.ui.login;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,21 +10,27 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alibaba.fastjson.JSONObject;
 import com.youzi.blue.MainActivity;
 import com.youzi.blue.R;
 import com.youzi.blue.db.DBOpenHelper;
+import com.youzi.blue.net.client.entity.User;
+import com.youzi.blue.net.common.FormData;
 import com.youzi.blue.utils.OkHttp;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.Response;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -73,25 +80,48 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, "密码不一致！", Toast.LENGTH_SHORT).show();
                 } else {
                     //注册
-                    OkHttp.getInstance().httpGet("", new Callback() {
+                    User user = new User(null, et_name, et_password, null, null, null);
+                    FormBody formBody = null;
+                    try {
+                        formBody = new FormData<User>().get(user);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                    OkHttp.getInstance().httpPost("http://192.168.31.208:8008/user/register", formBody, new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             Log.e("blue", "error");
                         }
 
+                        @SuppressLint("SetTextI18n")
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
-                            String s = response.body().toString();
+                            JSONObject jo = JSONObject.parseObject(new String(response.body().bytes()));
 
-                            if (s.equals("1")) {
+                            TextView show_message = (TextView) findViewById(R.id.show_message);
+                            String showText;
+
+                            if ((Boolean) jo.get("result")) {
                                 //存储注册的用户名和密码 把账号密码存储进数据库
-                                dbOpenHelper.insertData(et_name, et_password);
-                                Toast.makeText(RegisterActivity.this, "注册成功！", Toast.LENGTH_SHORT).show();
+                                dbOpenHelper.updateUserInfo(et_name, et_password);
+                                showText = "注册成功!";
                                 //关闭注册页面 跳转到登录页面
                                 RegisterActivity.this.finish();
                             } else {
-                                Toast.makeText(RegisterActivity.this, "注册失败！", Toast.LENGTH_SHORT).show();
+                                showText = "注册失败!" + jo.get("message");
                             }
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    show_message.setText(showText);
+                                    try {
+                                        Thread.sleep(3000);
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    show_message.setText("");
+                                }
+                            }).start();
                         }
                     });
                 }

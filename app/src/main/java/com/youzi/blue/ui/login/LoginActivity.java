@@ -1,62 +1,46 @@
 package com.youzi.blue.ui.login;
 
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alibaba.fastjson.JSONObject;
 import com.youzi.blue.MainActivity;
 import com.youzi.blue.R;
 import com.youzi.blue.db.DBOpenHelper;
 import com.youzi.blue.utils.OkHttp;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity {
-
-    //定义登录Button 编辑框
-    private Button btn_login;
-    private EditText et_password, et_userName;
     /*定义数据库所需成员变量 */
     private DBOpenHelper dbOpenHelper;
-    //数据库里存储的username,password
-    String username;
-    String dbpassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        ListView test_text = (ListView) findViewById(R.id.test_text);
 
         /*定义数据库对象 */
         dbOpenHelper = new DBOpenHelper(LoginActivity.this, "user.db", null, 1);
 
         Map<String, String> user = dbOpenHelper.getUser();
-        if (user != null && user.get("loginState").equals("1")) {
+        if (user != null) {
             //已经登录, 直接跳转到Mainactivity
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
@@ -64,9 +48,9 @@ public class LoginActivity extends AppCompatActivity {
             LoginActivity.this.finish();
         }
 
-        //初始化
-        initView();
-        //注册完之后更新
+        Button btn_login = findViewById(R.id.btn_login);
+        EditText et_userName = findViewById(R.id.et_username);
+        EditText et_password = findViewById(R.id.et_password);
 
         /*点击跳转至注册页面 【还没有账号？点击注册】按钮*/
         Button btn_register1 = (Button) findViewById(R.id.btn_register1);
@@ -80,35 +64,20 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        //登录按钮单击事件
-        btn_login = (Button) findViewById(R.id.btn_login);
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //获取输入的密码框内容
-                String etpassword = et_password.getText().toString();
-                /*获取数据库里的数据*/
+                String etPassword = et_password.getText().toString();
                 //登录按钮获取要查询的账号
-                String key = et_userName.getText().toString();
-                Map<String, String> user = dbOpenHelper.getUser(key);
+                String etUsername = et_userName.getText().toString();
+
                 //正则化判断输入的账号是否符合手机号格式
-                if (!isTelPhoneNumber(key)) {
+                if (!isTelPhoneNumber(etUsername)) {
                     Toast.makeText(LoginActivity.this, "请输入正确的手机号！", Toast.LENGTH_SHORT).show();
-                } else if (user == null) { //如果数据库中没有查询的用户数据
-                    //显示提示信息，没有相关记录
-                    Toast.makeText(LoginActivity.this,
-                            "该用户名未注册，请先注册", Toast.LENGTH_LONG).show();
                 } else {
-                    username = user.get("username");
-                    dbpassword = user.get("password");
-
-                    SimpleAdapter simpleAdapter = new SimpleAdapter(LoginActivity.this, Collections.singletonList(user),
-                            R.layout.userdata_main, new String[]{"username", "password"}, new int[]{R.id.result_name, R.id.result_grade});
-                    //将适配器和测试的listview关联，我这里的listview叫test_text
-                    test_text.setAdapter(simpleAdapter);
-
                     //登录
-                    OkHttp.getInstance().httpGet("", new Callback() {
+                    OkHttp.getInstance().httpGet("http://192.168.31.208:8008/user/auth?username=" + etUsername + "&password=" + etPassword, new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             Log.e("blue", "error");
@@ -116,23 +85,37 @@ public class LoginActivity extends AppCompatActivity {
 
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
-                            String s = response.body().toString();
+                            JSONObject jo = JSONObject.parseObject(new String(response.body().bytes()));
 
-                            if (s.equals("1")) {
-                                Toast.makeText(LoginActivity.this, "登陆成功！", Toast.LENGTH_SHORT).show();
-                                //登录状态为已登录, 下次直接进入主页
-                                dbOpenHelper.updateLoginState(username, "1");
+                            TextView login_show = (TextView) findViewById(R.id.login_show);
+                            String showText;
+
+                            if ((Boolean) jo.get("result")) {
+                                showText = "登录成功!";
+                                //修改本地存储为已登录
+                                dbOpenHelper.updateUserInfo(etUsername, etPassword);
                                 //跳转到Mainactivity
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 //关闭登录页面
                                 LoginActivity.this.finish();
                             } else {
-                                Toast.makeText(LoginActivity.this, "密码错误！", Toast.LENGTH_SHORT).show();
+                                showText = "登陆失败!" + jo.get("message");
                             }
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    login_show.setText(showText);
+                                    try {
+                                        Thread.sleep(3000);
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    login_show.setText("");
+                                }
+                            }).start();
                         }
                     });
-
                 }
             }
         });
@@ -148,13 +131,6 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             return false;
         }
-    }
-
-    //定义初始化
-    private void initView() {
-        btn_login = findViewById(R.id.btn_login);
-        et_userName = findViewById(R.id.et_username);
-        et_password = findViewById(R.id.et_password);
     }
 
     //    //重写onDestroy()方法
