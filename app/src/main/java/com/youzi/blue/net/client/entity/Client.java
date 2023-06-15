@@ -1,8 +1,6 @@
 package com.youzi.blue.net.client.entity;
 
 
-import io.netty.channel.Channel;
-
 import java.io.Serializable;
 
 public class Client implements Serializable {

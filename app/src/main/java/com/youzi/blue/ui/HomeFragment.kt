@@ -10,6 +10,8 @@ import android.widget.SimpleAdapter
 import androidx.fragment.app.Fragment
 import com.youzi.blue.R
 import com.youzi.blue.WatchContect
+import com.youzi.blue.service.HelpService
+import com.youzi.blue.service.NetService
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_setting.*
 
@@ -54,6 +56,7 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
         if (arguments != null) {
             mContentText = arguments!!.getString(ARG_SHOW_TEXT)
         }
+        context?.startService(Intent(activity, NetService::class.java))
     }
 
     @SuppressLint("MissingInflatedId")
@@ -83,7 +86,7 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
             item["deviceName"] = "设备$i"
             item["description"] =
                 "俄国人为符合规范鹅嘎王菲和瑞特个人房屋我和如果文特人格奉化人提供服务和如果无法和各位$i"
-            item["state"] =R.drawable.state_green
+            item["state"] = R.drawable.state_green
             data.add(item)
         }
     }
@@ -95,8 +98,8 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
             context,
             data,  //data 不仅仅是数据，而是一个与界面耦合的数据混合体
             R.layout.listviewitems,
-            arrayOf<String>("deviceImage", "deviceName", "description","state"),
-            intArrayOf(R.id.device_image, R.id.device_name, R.id.description,R.id.state)
+            arrayOf<String>("deviceImage", "deviceName", "description", "state"),
+            intArrayOf(R.id.device_image, R.id.device_name, R.id.description, R.id.state)
         )
         //foot设置优雅的分割线
         listView.setFooterDividersEnabled(true)

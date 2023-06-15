@@ -24,6 +24,8 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
 
     lateinit var channel: Channel
 
+    lateinit var netService: NetService
+
     private var floatRootView: View? = null//悬浮窗View
     private val mLifecycleRegistry = LifecycleRegistry(this)
 

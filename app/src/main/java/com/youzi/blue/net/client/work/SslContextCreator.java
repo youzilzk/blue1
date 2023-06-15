@@ -39,7 +39,7 @@ public class SslContextCreator {
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             if (keyStore == null) {
                 AssetManager manager = Manager.getAssetManager();
-                initKeyStore(manager, jksPath);
+                initKeyStore(manager);
             }
             tmf.init(keyStore);
             TrustManager[] trustManagers = tmf.getTrustManagers();
@@ -57,9 +57,9 @@ public class SslContextCreator {
         }
     }
 
-    private static void initKeyStore(AssetManager manager, String jksPath) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
-        log.info("read {}  and Initializing KeyStore...", jksPath);
-        InputStream jksInputStream = manager.open(jksPath);
+    private static void initKeyStore(AssetManager manager) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
+        log.info("read {}  and Initializing KeyStore...", "test.bks");
+        InputStream jksInputStream = manager.open("test.bks");
         final String keyStorePassword = "123456";
         final KeyStore ks = KeyStore.getInstance("BKS");
         ks.load(jksInputStream, keyStorePassword.toCharArray());

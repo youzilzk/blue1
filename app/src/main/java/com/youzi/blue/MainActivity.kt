@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.youzi.blue.net.client.manager.Manager
 import com.youzi.blue.net.client.work.Clienter
 import com.youzi.blue.ui.HomeFragment
 import com.youzi.blue.ui.SettingFragment
@@ -21,14 +22,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Manager.initAssetManager(resources.assets)
+        Manager.initContext(applicationContext)
+
         setContentView(R.layout.activity_main)
         initView()
 
         //权限检查
         Utils.checkBasePermission(this)
-        Thread {
-            Clienter.connect()
-        }.start()
     }
 
     private fun initView() {

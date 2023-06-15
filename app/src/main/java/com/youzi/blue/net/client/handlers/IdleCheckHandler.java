@@ -13,17 +13,17 @@ import io.netty.handler.timeout.IdleStateHandler;
 
 
 public class IdleCheckHandler extends IdleStateHandler {
-    private static final LoggerFactory log = LoggerFactory.getLogger();
+    private static LoggerFactory log = LoggerFactory.getLogger();
 
-    public static final int READ_IDLE_TIME = 50;
-    public static final int WRITE_IDLE_TIME = 45;
+    public static final int READ_IDLE_TIME = 35;
+    public static final int WRITE_IDLE_TIME = 30;
 
     public IdleCheckHandler() {
         super(READ_IDLE_TIME, WRITE_IDLE_TIME, 0);
     }
 
     @Override
-    protected void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt) throws Exception {
+    protected void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt)   {
         Channel channel = ctx.channel();
 
         if (IdleState.WRITER_IDLE == evt.state()) {
@@ -31,9 +31,6 @@ public class IdleCheckHandler extends IdleStateHandler {
             Message message = new Message();
             message.setType(Message.TYPE.HEARTBEAT);
             ctx.channel().writeAndFlush(message);
-        } else {
-            log.info("客户端读闲置, 关闭链路[{}]", channel.id());
-            channel.close().sync();
         }
     }
 }
