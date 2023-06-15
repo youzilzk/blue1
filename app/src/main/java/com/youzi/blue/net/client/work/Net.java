@@ -22,21 +22,12 @@ import io.netty.handler.ssl.SslHandler;
 /**
  * 客户端启动器
  */
-public class Clienter {
+public class Net {
     private static LoggerFactory log = LoggerFactory.getLogger();
 
-    private static Channel clientChannel;
-
-
-    public static Channel connect() throws InterruptedException {
-        if (clientChannel == null) {
-            clientChannel = start();
-        }
-        return clientChannel;
-    }
-
-    private static Channel start() throws InterruptedException {
-        InetSocketAddress inetAddress = new InetSocketAddress("192.168.31.208", 18904);
+    public static Channel start() throws InterruptedException {
+//        InetSocketAddress inetAddress = new InetSocketAddress("192.168.31.208", 18904);
+        InetSocketAddress inetAddress = new InetSocketAddress("47.108.130.44", 18904);
 
         Bootstrap bootstrap = new Bootstrap()
                 .group(new NioEventLoopGroup())

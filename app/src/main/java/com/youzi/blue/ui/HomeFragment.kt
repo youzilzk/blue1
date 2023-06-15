@@ -10,8 +10,6 @@ import android.widget.SimpleAdapter
 import androidx.fragment.app.Fragment
 import com.youzi.blue.R
 import com.youzi.blue.WatchContect
-import com.youzi.blue.service.HelpService
-import com.youzi.blue.service.NetService
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_setting.*
 
@@ -56,7 +54,6 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
         if (arguments != null) {
             mContentText = arguments!!.getString(ARG_SHOW_TEXT)
         }
-        context?.startService(Intent(activity, NetService::class.java))
     }
 
     @SuppressLint("MissingInflatedId")

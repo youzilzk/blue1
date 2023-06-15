@@ -65,7 +65,6 @@
                 android:resource="@xml/allocation" />
         </service>
         <service android:name=".service.ScreenRecordService" />
-        <service android:name=".service.NetService" />
     </application>
 
 </manifest>

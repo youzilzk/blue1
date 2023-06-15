@@ -16,11 +16,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.youzi.blue.MainActivity
 import com.youzi.blue.R
 import com.youzi.blue.db.DBOpenHelper
-import com.youzi.blue.net.client.work.Clienter
-import com.youzi.blue.service.NetService
 import com.youzi.blue.service.ScreenRecordService
 import com.youzi.blue.service.WorkAccessibilityService
 import com.youzi.blue.ui.login.LoginActivity
@@ -98,8 +95,6 @@ class SettingFragment : Fragment(), View.OnClickListener {
                         if (it) {
                             accessibilityService = WorkAccessibilityService.instace
                             applyCapture()
-                            accessibilityService!!.netService = NetService.instace
-                            accessibilityService!!.channel = NetService.instace.clientChannel!!
                         }
                     }
 

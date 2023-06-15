@@ -14,6 +14,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.MutableLiveData
 import com.youzi.blue.R
+import com.youzi.blue.net.client.work.Net
 import com.youzi.blue.utils.ItemViewTouchListener
 import com.youzi.blue.utils.Utils.isNull
 import io.netty.channel.Channel
@@ -22,9 +23,7 @@ import io.netty.channel.Channel
 class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
     private lateinit var windowManager: WindowManager
 
-    lateinit var channel: Channel
-
-    lateinit var netService: NetService
+    var clientChannel: Channel? = null
 
     private var floatRootView: View? = null//悬浮窗View
     private val mLifecycleRegistry = LifecycleRegistry(this)
@@ -55,7 +54,10 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
         super.onCreate()
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
         initObserve()
+        //联网
+        clientChannel = Net.start()
     }
+
 
     /**
      * 打开关闭的订阅
