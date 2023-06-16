@@ -11,19 +11,18 @@ import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
 
 
-
 public class IdleCheckHandler extends IdleStateHandler {
     private static LoggerFactory log = LoggerFactory.getLogger();
 
-    public static final int READ_IDLE_TIME = 35;
-    public static final int WRITE_IDLE_TIME = 30;
+    public static final int READ_IDLE_TIME = 8;
+    public static final int WRITE_IDLE_TIME = 5;
 
     public IdleCheckHandler() {
         super(READ_IDLE_TIME, WRITE_IDLE_TIME, 0);
     }
 
     @Override
-    protected void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt)   {
+    protected void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt) {
         Channel channel = ctx.channel();
 
         if (IdleState.WRITER_IDLE == evt.state()) {

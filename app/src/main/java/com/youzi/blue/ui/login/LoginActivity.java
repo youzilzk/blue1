@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         dbOpenHelper = new DBOpenHelper(LoginActivity.this, "user.db", null, 1);
 
         Map<String, String> user = dbOpenHelper.getUser();
-        if (true) {
+        if (user != null) {
             //已经登录, 直接跳转到Mainactivity
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
