@@ -26,7 +26,7 @@ public class Net {
     private static LoggerFactory log = LoggerFactory.getLogger();
 
     public static Channel start() throws InterruptedException {
-//        InetSocketAddress inetAddress = new InetSocketAddress("192.168.31.208", 18904);
+//        InetSocketAddress inetAddress = new InetSocketAddress("47.108.130.44", 18904);
         InetSocketAddress inetAddress = new InetSocketAddress("47.108.130.44", 18904);
 
         Bootstrap bootstrap = new Bootstrap()

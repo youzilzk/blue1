@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         dbOpenHelper = new DBOpenHelper(LoginActivity.this, "user.db", null, 1);
 
         Map<String, String> user = dbOpenHelper.getUser();
-        if (user != null) {
+        if (true) {
             //已经登录, 直接跳转到Mainactivity
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
@@ -77,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "请输入正确的手机号！", Toast.LENGTH_SHORT).show();
                 } else {
                     //登录
-                    OkHttp.getInstance().httpGet("http://192.168.31.208:8008/user/auth?username=" + etUsername + "&password=" + etPassword, new Callback() {
+                    OkHttp.getInstance().httpGet("http://47.108.130.44:8008/user/auth?username=" + etUsername + "&password=" + etPassword, new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             Log.e("blue", "error");

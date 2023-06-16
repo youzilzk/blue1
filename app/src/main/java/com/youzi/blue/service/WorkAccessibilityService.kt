@@ -53,7 +53,7 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
         instace = this
         super.onCreate()
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
-        initObserve()
+//        initObserve()
         //联网
         clientChannel = Net.start()
     }
@@ -112,6 +112,7 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+        showWindow()
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
     }
 
