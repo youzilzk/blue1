@@ -3,9 +3,9 @@ package com.youzi.blue.threads
 import android.media.MediaRecorder
 import android.util.Log
 import com.youzi.blue.media.AACEncoder
-import com.youzi.blue.server.SocketServerThread
 import com.youzi.blue.io.VoicePack
 import com.youzi.blue.media.MyAudioRecord
+import com.youzi.blue.server.ServerThread
 
 /**
  *
@@ -16,7 +16,7 @@ import com.youzi.blue.media.MyAudioRecord
  * @param ByteRate [AacFormat.ByteRate256Kbs]
  * @param SampleRate [AacFormat.SampleRate44100]
  */
-class VoiceSender(var socketServer: SocketServerThread,
+class VoiceSender(var socketServer: ServerThread,
                   var ChannelMode: Int, var EncodeFormat: Int,
                   var ChannelCount: Int, var ByteRate: Int,
                   var SampleRate: Int
@@ -31,7 +31,6 @@ class VoiceSender(var socketServer: SocketServerThread,
         val voicePack = VoicePack(ChannelMode, EncodeFormat, ChannelCount,
                 ByteRate, SampleRate, ts, bytes)
         socketServer.putVoicePack(voicePack)
-        //LogUtil.appendToFile("/sdcard/tsstaac.aac",voicePack.datas);
     }
 
     fun exit() {

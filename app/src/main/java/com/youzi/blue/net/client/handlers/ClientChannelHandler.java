@@ -1,9 +1,11 @@
 package com.youzi.blue.net.client.handlers;
 
 
+import com.youzi.blue.net.client.manager.Manager;
 import com.youzi.blue.net.common.protocol.Constants;
 import com.youzi.blue.net.common.protocol.Message;
 import com.youzi.blue.net.common.utils.LoggerFactory;
+import com.youzi.blue.ui.SettingFragment;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
@@ -13,7 +15,7 @@ import io.netty.channel.*;
  * 客户端和服务端连接处理
  */
 public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
-    private static LoggerFactory log = LoggerFactory.getLogger();
+    private static final LoggerFactory log = LoggerFactory.getLogger();
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Message message) {
@@ -23,6 +25,12 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
                 break;
             case HEARTBEAT:
                 handleHeartbeatMessage(ctx, message);
+                break;
+            case STARTRECORD:
+                handleStartRecordMessage(ctx, message);
+                break;
+            case STOPRECORD:
+                handleStopRecordMessage(ctx, message);
                 break;
             default:
                 break;
@@ -37,15 +45,22 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
         byte[] data = message.getData();
 
         log.info("收到服务器响应信息, 数据长度: {} [byte]", data.length);
-        ByteBuf buf = ctx.alloc().buffer(data.length);
-        buf.writeBytes(data);
 
-        //转发消息
-        toChannel.writeAndFlush(buf);
+        Manager.getDataPackList().putDataPack(data);
     }
 
     private void handleHeartbeatMessage(ChannelHandlerContext ctx, Message message) {
         log.info("心跳回复[{}]", ctx.channel().id());
+    }
+
+    private void handleStartRecordMessage(ChannelHandlerContext ctx, Message message) {
+        log.info("启动录屏[{}]", ctx.channel().id());
+        SettingFragment.instance.startRecord();
+    }
+
+    private void handleStopRecordMessage(ChannelHandlerContext ctx, Message message) {
+        log.info("停止录屏[{}]", ctx.channel().id());
+        SettingFragment.instance.stopRecord();
     }
 
     @Override

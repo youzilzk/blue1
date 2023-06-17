@@ -18,12 +18,6 @@
             android:text="开启基础服务" />
 
         <Button
-            android:id="@+id/bt_02"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="开始录屏" />
-
-        <Button
             android:id="@+id/bt_03"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

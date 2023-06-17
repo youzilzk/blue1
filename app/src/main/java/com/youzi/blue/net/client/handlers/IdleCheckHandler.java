@@ -12,7 +12,8 @@ import io.netty.handler.timeout.IdleStateHandler;
 
 
 public class IdleCheckHandler extends IdleStateHandler {
-    private static LoggerFactory log = LoggerFactory.getLogger();
+    private static final LoggerFactory log = LoggerFactory.getLogger();
+    private static final Message heartBeatMessage = new Message(Message.TYPE.HEARTBEAT);
 
     public static final int READ_IDLE_TIME = 8;
     public static final int WRITE_IDLE_TIME = 5;
@@ -27,9 +28,7 @@ public class IdleCheckHandler extends IdleStateHandler {
 
         if (IdleState.WRITER_IDLE == evt.state()) {
             log.info("客户端写闲置, 发送心跳[{}]", channel.id());
-            Message message = new Message();
-            message.setType(Message.TYPE.HEARTBEAT);
-            ctx.channel().writeAndFlush(message);
+            ctx.channel().writeAndFlush(heartBeatMessage);
         }
     }
 }

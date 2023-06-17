@@ -4,8 +4,8 @@ import android.media.projection.MediaProjection
 import android.util.Log
 import com.youzi.blue.media.Encoder.EncoderListener
 import com.youzi.blue.media.MediaReader
-import com.youzi.blue.server.SocketServerThread
 import com.youzi.blue.io.VideoPack
+import com.youzi.blue.server.ServerThread
 
 /**
  *
@@ -16,7 +16,7 @@ import com.youzi.blue.io.VideoPack
  * @param videoBitrate 视频 比特率  16777216
  * @param videoFrameRate 视频 帧率 24
  */
-class VideoSender(var socketServerThread: SocketServerThread, mp: MediaProjection,
+class VideoSender(var serverThread: ServerThread, mp: MediaProjection,
                   var width: Int, var height: Int,
                   var videoBitrate: Int, var videoFrameRate: Int
 ) : EncoderListener {
@@ -29,7 +29,7 @@ class VideoSender(var socketServerThread: SocketServerThread, mp: MediaProjectio
         System.arraycopy(buffer, 0, datas, 0, buffer.size)
         val pack = VideoPack(datas, width, height, videoBitrate,
                 videoFrameRate, type, ts)
-        socketServerThread.putVideoPack(pack)
+        serverThread.putVideoPack(pack)
     }
 
     override fun onError(t: Throwable) {

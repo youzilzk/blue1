@@ -1,6 +1,5 @@
 package com.youzi.blue
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.SurfaceHolder
@@ -8,28 +7,20 @@ import android.view.SurfaceView
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.youzi.blue.server.SocketClientThread
+import com.youzi.blue.net.client.manager.Manager
+import com.youzi.blue.net.common.protocol.Constants
+import com.youzi.blue.net.common.protocol.Message
+import com.youzi.blue.service.WorkAccessibilityService
 import com.youzi.blue.threads.VideoPlayThread
 import com.youzi.blue.threads.VoicePlayThread
-import java.io.IOException
 import java.util.*
 import kotlin.concurrent.thread
 
 class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
     private lateinit var mSurfaceView: SurfaceView
     lateinit var mSurfaceHolder: SurfaceHolder
-    lateinit var ip: String
-    lateinit var socketClientThread: SocketClientThread
     var mdiaPlayThread: VideoPlayThread? = null
     var voicePlayThread: VoicePlayThread? = null
-
-
-    companion object {
-        fun buildIntent(intent: Intent, ip: String): Intent {
-            intent.putExtra("Address", ip)
-            return intent
-        }
-    }
 
 
     override fun onResume() {
@@ -44,12 +35,17 @@ class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_watch_contect)
 
+        //请求绑定管道
+        val message = Message(Message.TYPE.RELEVANT, "18385471848".encodeToByteArray())
+//        val message = Message(Message.TYPE.RELEVANT, "13965114730".encodeToByteArray())
+        WorkAccessibilityService.instace.clientChannel?.writeAndFlush(message)
+
+        //请求开启命令
+        val message1 = Message(Message.TYPE.STARTRECORD, Constants.STATE.REQUEST.value)
+        WorkAccessibilityService.instace.clientChannel?.writeAndFlush(message1)
 
         mSurfaceView = findViewById<SurfaceView>(R.id.surfaceView_watch)
         mSurfaceHolder = mSurfaceView.holder
-        val intent = intent
-        ip = intent.getStringExtra("Address")
-
         mSurfaceHolder.addCallback(this)
     }
 
@@ -70,46 +66,17 @@ class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
 
     private fun init() {
         thread(true) {
-            socketClientThread = ClientThread(ip)
-            try {
-                socketClientThread.connect()
-            } catch (e: IOException) {
-                e.printStackTrace()
-                runOnUiThread {
-                    Toast.makeText(
-                        this@WatchContect,
-                        "${getString(R.string.error)}:${e.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                return@thread
-            }
-            socketClientThread.start()
             mdiaPlayThread =
-                VideoPlayThread(mSurfaceHolder.surface, socketClientThread.dataPackList)
+                VideoPlayThread(mSurfaceHolder.surface, Manager.getDataPackList())
             mdiaPlayThread!!.start()
-            voicePlayThread = VoicePlayThread(socketClientThread.dataPackList)
+            voicePlayThread = VoicePlayThread(Manager.getDataPackList())
             voicePlayThread!!.start()
         }
     }
 
     fun clear() {
-        socketClientThread.exit()
         mdiaPlayThread?.exit()
         voicePlayThread?.exit()
-    }
-
-
-    private inner class ClientThread(ip: String) : SocketClientThread(ip, 9090) {
-        override fun onError(t: Throwable) {
-            runOnUiThread {
-                Toast.makeText(
-                    this@WatchContect,
-                    "${getString(R.string.error)}:${t.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
     }
 
     override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {

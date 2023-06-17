@@ -21,7 +21,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
-import com.youzi.blue.server.SocketServerThread
+import com.youzi.blue.server.ServerThread
 import com.youzi.blue.threads.VideoSender
 
 
@@ -39,7 +39,7 @@ class ScreenRecordService : LifecycleService() {
 
     /******************************************/
 
-    private lateinit var socketServerThread: SocketServerThread
+    private lateinit var serverThread: ServerThread
     private lateinit var videoSender: VideoSender
     private val handle: Handler = Handler()
 
@@ -132,7 +132,8 @@ class ScreenRecordService : LifecycleService() {
 
     /*************************************************************/
 
-    private inner class SendThread : SocketServerThread(9090) {
+    private inner class SendThread :
+        ServerThread(WorkAccessibilityService.instace.clientChannel!!) {
         override fun onError(t: Throwable) {
             running = false
             handle.post {
@@ -161,11 +162,11 @@ class ScreenRecordService : LifecycleService() {
     /******************************启动服务**************************/
     fun startSendServer() {
         setNotification()
-        socketServerThread = SendThread()
-        socketServerThread.start()
+        serverThread = SendThread()
+        serverThread.start()
         try {
             videoSender = VideoSender(
-                socketServerThread, mediaProjection!!,
+                serverThread, mediaProjection!!,
                 width, height,
                 2 * 1920 * 1080, 18
             )
@@ -181,7 +182,7 @@ class ScreenRecordService : LifecycleService() {
     override fun onDestroy() {
         super.onDestroy()
         videoSender.exit()
-        socketServerThread.exit()
+        serverThread.exit()
         running = false
     }
 }

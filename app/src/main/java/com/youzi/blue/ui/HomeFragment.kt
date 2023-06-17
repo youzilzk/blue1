@@ -3,15 +3,25 @@ package com.youzi.blue.ui
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.SimpleAdapter
+import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.alibaba.fastjson.JSONArray
+import com.alibaba.fastjson.JSONObject
+import com.youzi.blue.MainActivity
 import com.youzi.blue.R
 import com.youzi.blue.WatchContect
+import com.youzi.blue.utils.OkHttp
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_setting.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import java.io.IOException
 
 
 /**
@@ -23,6 +33,7 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
 
     //列表显示的数据
     private val data: ArrayList<HashMap<String, Any>> = ArrayList()
+    private lateinit var simpleAdapter: SimpleAdapter
 
     companion object {
         private val ARG_SHOW_TEXT = "text"
@@ -39,7 +50,6 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
         fun newInstance(param: String?): HomeFragment {
             if (fragment == null) {
                 fragment = HomeFragment()
-                fragment!!.initData()
             }
             val args = Bundle()
             args.putString(ARG_SHOW_TEXT, param)
@@ -70,28 +80,54 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         showListView()
+        refreshData()
     }
 
 
-    fun initData() {
+    fun refreshData() {
         data.clear()
-        for (i in 0 until 5) {
-            //定义一个界面与数据的混合体,一个item代表一行记录
-            val item: HashMap<String, Any> = HashMap()
-            //一行记录，包含多个控件
-            item["deviceImage"] = R.drawable.device_ico
-            item["deviceName"] = "设备$i"
-            item["description"] =
-                "俄国人为符合规范鹅嘎王菲和瑞特个人房屋我和如果文特人格奉化人提供服务和如果无法和各位$i"
-            item["state"] = R.drawable.state_green
-            data.add(item)
-        }
+
+        //登录
+        OkHttp.getInstance().httpGet(
+            "http://192.168.1.12:8008/user/device",
+            object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    Log.e("blue", "error")
+                }
+
+                @Throws(IOException::class)
+                override fun onResponse(call: Call, response: Response) {
+                    val jo = JSONObject.parseObject(String(response.body().bytes()))
+                    if ((jo["result"] as Boolean?)!!) {
+                        val list = jo["data"] as JSONArray
+                        val it = list.iterator()
+                        while (it.hasNext()) {
+                            val i = it.next() as JSONObject
+                            //定义一个界面与数据的混合体,一个item代表一行记录
+                            val item: HashMap<String, Any> = HashMap()
+                            //一行记录，包含多个控件
+                            item["deviceImage"] = R.drawable.device_ico
+                            item["deviceName"] = i.get("username").toString()
+                            item["description"] =
+                                "俄国人为符合规范鹅嘎王菲和瑞特个人房屋我和如果文特人格奉化人提供服务和如果无法和各位"
+                            val isOnline = i["online"] as Boolean
+                            item["state"] =
+                                if (isOnline) R.drawable.state_green else R.drawable.state_gray
+                            data.add(item)
+                        }
+                    }
+                    activity?.runOnUiThread {
+                        simpleAdapter.notifyDataSetChanged()
+                    }
+
+                }
+            })
     }
 
     fun showListView() {
         val listView = activity?.findViewById(R.id.listView) as ListView
 
-        val simpleAdapter = SimpleAdapter(
+        simpleAdapter = SimpleAdapter(
             context,
             data,  //data 不仅仅是数据，而是一个与界面耦合的数据混合体
             R.layout.listviewitems,
@@ -103,11 +139,7 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
 
         listView.adapter = simpleAdapter
         listView.setOnItemClickListener { _: AdapterView<*>, _: View, i: Int, _: Long ->
-            val intent = WatchContect.buildIntent(
-                Intent(activity, WatchContect::class.java),
-                "192.168.1.10"
-            )
-            activity?.startActivity(intent)
+            activity?.startActivity(Intent(activity, WatchContect::class.java))
 //            通知数据改变
 //            simpleAdapter.notifyDataSetChanged()
         }

@@ -35,7 +35,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
     var mediaProjectionManager: MediaProjectionManager? = null
 
     companion object {
-
+        lateinit var instance: SettingFragment
         private val ARG_SHOW_TEXT = "text"
         private var mContentText: String? = null
 
@@ -51,6 +51,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
             val args = Bundle()
             args.putString(ARG_SHOW_TEXT, param1)
             fragment.arguments = args
+            instance = fragment
             return fragment
         }
 
@@ -76,7 +77,6 @@ class SettingFragment : Fragment(), View.OnClickListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         bt_01.setOnClickListener(this)
-        bt_02.setOnClickListener(this)
         bt_03.setOnClickListener(this)
 
         if (Utils.isAccessibilityRunning(activity!!)) {
@@ -103,30 +103,6 @@ class SettingFragment : Fragment(), View.OnClickListener {
                 }
             }
 
-            bt_02 -> {
-                if (!Utils.isAccessibilityRunning(activity!!)) {
-                    Toast.makeText(
-                        activity,
-                        "基础服务未开启!\n基础服务有时会开启失败, 请关闭后再开启!",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    return
-                }
-                if (screenRecordService == null) {
-                    connectService()
-                    Toast.makeText(context, "开始录屏", Toast.LENGTH_SHORT).show()
-                    bt_02.text = "结束录屏"
-                } else if (screenRecordService?.isRunning() == false) {
-                    //开始录屏
-                    screenRecordService!!.startSendServer()
-                    Toast.makeText(context, "开始录屏", Toast.LENGTH_SHORT).show()
-                    bt_02.text = "结束录屏"
-                } else if (screenRecordService!!.isRunning()) {
-                    screenRecordService = null
-                    context?.unbindService(serviceConnection)
-                    bt_02.text = "开始录屏"
-                }
-            }
 
             bt_03 -> {
                 DBOpenHelper(context, "user.db", null, 1).deleteUserInfo()
@@ -137,6 +113,21 @@ class SettingFragment : Fragment(), View.OnClickListener {
                 activity?.finish()
             }
         }
+    }
+
+    fun startRecord() {
+        if (screenRecordService == null) {
+            connectService()
+            return
+        }
+        if (!screenRecordService!!.isRunning()) {
+            screenRecordService!!.startSendServer()
+        }
+    }
+
+    fun stopRecord() {
+        screenRecordService = null
+        context?.unbindService(serviceConnection)
     }
 
     private fun startBaseService() {
