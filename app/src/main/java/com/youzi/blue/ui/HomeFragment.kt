@@ -139,7 +139,11 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
 
         listView.adapter = simpleAdapter
         listView.setOnItemClickListener { _: AdapterView<*>, _: View, i: Int, _: Long ->
-            activity?.startActivity(Intent(activity, WatchContect::class.java))
+            val intent = Intent(activity, WatchContect::class.java)
+            val username = data.get(i).get("deviceName")
+            intent.putExtra("username", username.toString())
+            activity?.startActivity(intent)
+
 //            通知数据改变
 //            simpleAdapter.notifyDataSetChanged()
         }

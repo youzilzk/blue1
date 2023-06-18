@@ -14,6 +14,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.MutableLiveData
 import com.youzi.blue.R
+import com.youzi.blue.db.DBOpenHelper
 import com.youzi.blue.net.client.work.Net
 import com.youzi.blue.utils.ItemViewTouchListener
 import com.youzi.blue.utils.Utils.isNull
@@ -25,6 +26,8 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
 
     var clientChannel: Channel? = null
 
+
+
     private var floatRootView: View? = null//悬浮窗View
     private val mLifecycleRegistry = LifecycleRegistry(this)
 
@@ -33,6 +36,7 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
         @SuppressLint("StaticFieldLeak")
         lateinit var instace: WorkAccessibilityService
 
+        var username: String? = null
         //无障碍服务运行状态
         var isAccessibilityRunning = MutableLiveData<Boolean>()
     }
@@ -54,8 +58,10 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
         super.onCreate()
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
 //        initObserve()
+
+
         //联网
-        clientChannel = Net.start()
+        clientChannel = Net.start(username!!)
     }
 
 

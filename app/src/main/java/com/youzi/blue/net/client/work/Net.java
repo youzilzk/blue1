@@ -9,6 +9,8 @@ import com.youzi.blue.net.common.protocol.MessageDecoder;
 import com.youzi.blue.net.common.protocol.MessageEncoder;
 import com.youzi.blue.net.common.utils.LoggerFactory;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
@@ -29,7 +31,7 @@ import io.netty.handler.ssl.SslHandler;
 public class Net {
     private static LoggerFactory log = LoggerFactory.getLogger();
 
-    public static Channel start() throws InterruptedException {
+    public static Channel start(@NotNull String username) throws InterruptedException {
 //        InetSocketAddress inetAddress = new InetSocketAddress("192.168.1.12", 18904);
         InetSocketAddress inetAddress = new InetSocketAddress("192.168.1.12", 18904);
 
@@ -59,7 +61,7 @@ public class Net {
             //认证
             Message message = new Message();
             message.setType(Message.TYPE.LINK);
-            message.setData("13965114730".getBytes(StandardCharsets.UTF_8));
+            message.setData(username.getBytes(StandardCharsets.UTF_8));
 //            message.setData("18385471848".getBytes(StandardCharsets.UTF_8));
             await.channel().writeAndFlush(message);
 

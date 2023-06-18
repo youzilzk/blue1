@@ -33,6 +33,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
     private var accessibilityService: WorkAccessibilityService? = null
     private var screenRecordService: ScreenRecordService? = null
     var mediaProjectionManager: MediaProjectionManager? = null
+    lateinit var dbOpenHelper: DBOpenHelper
 
     companion object {
         lateinit var instance: SettingFragment
@@ -59,7 +60,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        dbOpenHelper = DBOpenHelper(context, "user.db", null, 1)
         if (arguments != null) {
             mContentText = arguments!!.getString(ARG_SHOW_TEXT)
         }
@@ -78,6 +79,10 @@ class SettingFragment : Fragment(), View.OnClickListener {
         super.onActivityCreated(savedInstanceState)
         bt_01.setOnClickListener(this)
         bt_03.setOnClickListener(this)
+
+        val username = dbOpenHelper.user["username"] as String
+
+        WorkAccessibilityService.username = username
 
         if (Utils.isAccessibilityRunning(activity!!)) {
             bt_01.isEnabled = false
@@ -105,7 +110,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
 
 
             bt_03 -> {
-                DBOpenHelper(context, "user.db", null, 1).deleteUserInfo()
+                dbOpenHelper.deleteUserInfo()
                 //跳转到LoginActivity
                 val intent = Intent(activity, LoginActivity::class.java)
                 startActivity(intent)
