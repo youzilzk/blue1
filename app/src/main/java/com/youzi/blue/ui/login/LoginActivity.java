@@ -2,6 +2,7 @@ package com.youzi.blue.ui.login;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,11 +16,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.alibaba.fastjson.JSONObject;
 import com.youzi.blue.MainActivity;
 import com.youzi.blue.R;
-import com.youzi.blue.db.DBOpenHelper;
 import com.youzi.blue.utils.OkHttp;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,19 +27,15 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity {
-    /*定义数据库所需成员变量 */
-    private DBOpenHelper dbOpenHelper;
+
+    SharedPreferences userPreferences = getSharedPreferences("user", MODE_PRIVATE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        /*定义数据库对象 */
-        dbOpenHelper = new DBOpenHelper(LoginActivity.this, "user.db", null, 1);
-
-        Map<String, String> user = dbOpenHelper.getUser();
-        if (user != null) {
+        String username = userPreferences.getString("username", "");
+        if (username != null) {
             //已经登录, 直接跳转到Mainactivity
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
@@ -93,7 +88,10 @@ public class LoginActivity extends AppCompatActivity {
                             if ((Boolean) jo.get("result")) {
                                 showText = "登录成功!";
                                 //修改本地存储为已登录
-                                dbOpenHelper.updateUserInfo(etUsername, etPassword);
+                                SharedPreferences.Editor edit = userPreferences.edit();
+                                edit.putString("username", etUsername);
+                                edit.putString("password", etPassword);
+                                edit.apply();
                                 //跳转到Mainactivity
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
@@ -130,15 +128,6 @@ public class LoginActivity extends AppCompatActivity {
             return matcher.matches();
         } else {
             return false;
-        }
-    }
-
-    //    //重写onDestroy()方法
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (dbOpenHelper != null) {
-            dbOpenHelper.close();
         }
     }
 }
