@@ -91,10 +91,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                             if ((Boolean) jo.get("result")) {
                                 //修改本地存储为已登录
-                                SharedPreferences.Editor edit = userPreferences.edit();
-                                edit.putString("username", et_name);
-                                edit.putString("password", et_password);
-                                edit.apply();
+                                userPreferences.edit().putString("username", et_name).apply();
                                 showText = "注册成功!";
                                 //关闭注册页面 跳转到登录页面
                                 RegisterActivity.this.finish();

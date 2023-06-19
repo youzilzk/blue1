@@ -2,6 +2,7 @@ package com.youzi.blue.ui
 
 import android.annotation.SuppressLint
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
@@ -17,7 +18,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.youzi.blue.R
-import com.youzi.blue.db.DBOpenHelper
 import com.youzi.blue.service.ScreenRecordService
 import com.youzi.blue.service.WorkAccessibilityService
 import com.youzi.blue.ui.login.LoginActivity
@@ -33,7 +33,6 @@ class SettingFragment : Fragment(), View.OnClickListener {
     private var accessibilityService: WorkAccessibilityService? = null
     private var screenRecordService: ScreenRecordService? = null
     var mediaProjectionManager: MediaProjectionManager? = null
-    lateinit var dbOpenHelper: DBOpenHelper
 
     companion object {
         lateinit var instance: SettingFragment
@@ -60,7 +59,6 @@ class SettingFragment : Fragment(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dbOpenHelper = DBOpenHelper(context, "user.db", null, 1)
         if (arguments != null) {
             mContentText = arguments!!.getString(ARG_SHOW_TEXT)
         }
@@ -79,10 +77,6 @@ class SettingFragment : Fragment(), View.OnClickListener {
         super.onActivityCreated(savedInstanceState)
         bt_01.setOnClickListener(this)
         bt_03.setOnClickListener(this)
-
-        val username = dbOpenHelper.user["username"] as String
-
-        WorkAccessibilityService.username = username
 
         if (Utils.isAccessibilityRunning(activity!!)) {
             bt_01.isEnabled = false
@@ -110,7 +104,8 @@ class SettingFragment : Fragment(), View.OnClickListener {
 
 
             bt_03 -> {
-                dbOpenHelper.deleteUserInfo()
+                activity?.getSharedPreferences("user", Context.MODE_PRIVATE)?.edit()!!
+                    .putString("username", null).apply()
                 //跳转到LoginActivity
                 val intent = Intent(activity, LoginActivity::class.java)
                 startActivity(intent)

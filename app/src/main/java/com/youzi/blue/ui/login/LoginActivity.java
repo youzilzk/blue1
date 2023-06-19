@@ -88,10 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                             if ((Boolean) jo.get("result")) {
                                 showText = "登录成功!";
                                 //修改本地存储为已登录
-                                SharedPreferences.Editor edit = userPreferences.edit();
-                                edit.putString("username", etUsername);
-                                edit.putString("password", etPassword);
-                                edit.apply();
+                                userPreferences.edit().putString("username", etUsername).apply();
                                 //跳转到Mainactivity
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
