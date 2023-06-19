@@ -32,8 +32,8 @@ public class Net {
     private static LoggerFactory log = LoggerFactory.getLogger();
 
     public static Channel start(@NotNull String username) throws InterruptedException {
-//        InetSocketAddress inetAddress = new InetSocketAddress("192.168.1.12", 18904);
-        InetSocketAddress inetAddress = new InetSocketAddress("192.168.1.12", 18904);
+//        InetSocketAddress inetAddress = new InetSocketAddress("192.168.31.208", 18904);
+        InetSocketAddress inetAddress = new InetSocketAddress("192.168.31.208", 18904);
 
         Bootstrap bootstrap = new Bootstrap()
                 .group(new NioEventLoopGroup())

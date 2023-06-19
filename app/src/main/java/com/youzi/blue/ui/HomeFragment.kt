@@ -89,7 +89,7 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
 
         //登录
         OkHttp.getInstance().httpGet(
-            "http://192.168.1.12:8008/user/device",
+            "http://192.168.31.208:8008/user/device",
             object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
                     Log.e("blue", "error")
