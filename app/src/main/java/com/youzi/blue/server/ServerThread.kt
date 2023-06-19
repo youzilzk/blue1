@@ -35,20 +35,30 @@ abstract class ServerThread(private var channel: Channel) : Thread(TAG) {
             if (video != null) {
                 val tmp = buildVideoPack(video)
                 val message = Message(Message.TYPE.RELAY, tmp)
-                channel.writeAndFlush(message)
-                Log.d(TAG, "has send video pack to server")
+
+                if (channel.isActive && channel.isWritable) {
+                    channel.writeAndFlush(message)
+                    Log.d(TAG, "has send video pack to server")
+                }
+
+
                 bufferListVideo.remove(video)
             }
             val voice: Writable? = bufferListVoice.peek()
             if (voice != null) {
                 val tmp = buildVoicePack(voice)
                 val message = Message(Message.TYPE.RELAY, tmp)
-                channel.writeAndFlush(message)
-                Log.d(TAG, "has send voice pack to server")
+
+                if (channel.isActive && channel.isWritable) {
+                    channel.writeAndFlush(message)
+                    Log.d(TAG, "has send voice pack to server")
+                }
+
                 bufferListVoice.remove(voice)
             }
         }
     }
+
     fun putVoicePack(writable: Writable) {
         bufferListVoice.offer(writable)
     }
@@ -56,6 +66,7 @@ abstract class ServerThread(private var channel: Channel) : Thread(TAG) {
     fun putVideoPack(writable: Writable?) {
         bufferListVideo.offer(writable)
     }
+
     fun exit() {
         Log.d(TAG, "退出中")
         exit = true

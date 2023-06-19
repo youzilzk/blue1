@@ -148,6 +148,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
     }
 
     private fun connectService() {
+        val c=context
         val intent = Intent(context, ScreenRecordService::class.java)
         context?.bindService(intent, serviceConnection, AppCompatActivity.BIND_AUTO_CREATE)
     }
