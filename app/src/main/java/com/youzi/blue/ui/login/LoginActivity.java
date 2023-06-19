@@ -28,12 +28,14 @@ import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    SharedPreferences userPreferences = getSharedPreferences("user", MODE_PRIVATE);
+    SharedPreferences userPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        userPreferences = getSharedPreferences("user", MODE_PRIVATE);
         String username = userPreferences.getString("username", null);
         if (username != null) {
             //已经登录, 直接跳转到Mainactivity

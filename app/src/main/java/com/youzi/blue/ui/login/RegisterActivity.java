@@ -31,12 +31,15 @@ import okhttp3.Response;
 public class RegisterActivity extends AppCompatActivity {
     private EditText et_register_username, et_register_password, et_again_password;
 
-    SharedPreferences userPreferences = getSharedPreferences("user", MODE_PRIVATE);
+    SharedPreferences userPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        userPreferences = getSharedPreferences("user", MODE_PRIVATE);
+
         //注册按钮
         Button btn_register = (Button) findViewById(R.id.btn_register);
         //用户名编辑框
