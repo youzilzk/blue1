@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        String username = userPreferences.getString("username", "");
+        String username = userPreferences.getString("username", null);
         if (username != null) {
             //已经登录, 直接跳转到Mainactivity
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
