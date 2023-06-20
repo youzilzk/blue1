@@ -27,7 +27,7 @@ public class IdleCheckHandler extends IdleStateHandler {
         Channel channel = ctx.channel();
 
         if (IdleState.WRITER_IDLE == evt.state()) {
-            log.info("客户端写闲置, 发送心跳[{}]", channel.id());
+            log.info("发送心跳[{}]", channel.id());
             ctx.channel().writeAndFlush(heartBeatMessage);
         }
     }

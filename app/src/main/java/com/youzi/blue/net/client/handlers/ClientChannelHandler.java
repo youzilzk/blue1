@@ -2,7 +2,6 @@ package com.youzi.blue.net.client.handlers;
 
 
 import com.youzi.blue.net.client.manager.Manager;
-import com.youzi.blue.net.common.protocol.Constants;
 import com.youzi.blue.net.common.protocol.Message;
 import com.youzi.blue.net.common.utils.LoggerFactory;
 import com.youzi.blue.service.WorkAccessibilityService;
