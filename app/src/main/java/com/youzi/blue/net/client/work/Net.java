@@ -1,22 +1,16 @@
 package com.youzi.blue.net.client.work;
 
-import com.alibaba.fastjson.JSONObject;
-import com.youzi.blue.net.client.entity.User;
 import com.youzi.blue.net.client.handlers.ClientChannelHandler;
 import com.youzi.blue.net.client.handlers.IdleCheckHandler;
 import com.youzi.blue.net.common.protocol.Message;
 import com.youzi.blue.net.common.protocol.MessageDecoder;
 import com.youzi.blue.net.common.protocol.MessageEncoder;
 import com.youzi.blue.net.common.utils.LoggerFactory;
-
 import org.jetbrains.annotations.NotNull;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
-
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -29,7 +23,7 @@ import io.netty.handler.ssl.SslHandler;
  * 客户端启动器
  */
 public class Net {
-    private static LoggerFactory log = LoggerFactory.getLogger();
+    private static final LoggerFactory log = LoggerFactory.getLogger();
 
     public static Channel start(@NotNull String username) throws InterruptedException {
 //        InetSocketAddress inetAddress = new InetSocketAddress("192.168.31.208", 18904);
@@ -62,7 +56,6 @@ public class Net {
             Message message = new Message();
             message.setType(Message.TYPE.LINK);
             message.setData(username.getBytes(StandardCharsets.UTF_8));
-//            message.setData("18385471848".getBytes(StandardCharsets.UTF_8));
             await.channel().writeAndFlush(message);
 
             return await.channel();

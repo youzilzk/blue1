@@ -35,7 +35,7 @@ class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_watch_contect)
 
-        val username = getIntent().getStringExtra("username") as String
+        val username = intent.getStringExtra("username") as String
         //请求绑定管道
         val message = Message(Message.TYPE.RELEVANT, username.encodeToByteArray())
         WorkAccessibilityService.instace.clientChannel?.writeAndFlush(message)

@@ -1,5 +1,6 @@
 package com.youzi.blue.net.client.manager;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.AssetManager;
 
@@ -8,9 +9,10 @@ import com.youzi.blue.server.DataPackList;
 public class Manager {
     private static AssetManager assetManager;
 
+    @SuppressLint("StaticFieldLeak")
     private static Context aContext;
 
-    private static DataPackList dataPackList = new DataPackList();
+    private static final DataPackList dataPackList = new DataPackList();
 
     public static DataPackList getDataPackList() {
         return dataPackList;

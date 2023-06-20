@@ -20,7 +20,6 @@ import android.util.Log
 import android.view.*
 import android.view.accessibility.AccessibilityEvent
 import android.widget.Toast
-import androidx.annotation.UiThread
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -31,7 +30,6 @@ import com.youzi.blue.net.client.work.Net
 import com.youzi.blue.server.ServerThread
 import com.youzi.blue.threads.VideoSender
 import com.youzi.blue.utils.ItemViewTouchListener
-import com.youzi.blue.utils.Utils.isNull
 import io.netty.channel.Channel
 
 
@@ -60,10 +58,6 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
         mediaProjection = project
     }
 
-    fun getMediaProject(): MediaProjection? {
-        return mediaProjection
-    }
-
     /*******************************/
 
     private var running = false
@@ -88,7 +82,6 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
         instace = this
         super.onCreate()
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
-//        initObserve()
 
         val username = getSharedPreferences("user", MODE_PRIVATE).getString("username", null)
         //联网
@@ -96,26 +89,7 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
     }
 
 
-    /**
-     * 打开关闭的订阅
-     */
-    private fun initObserve() {
-        isAccessibilityRunning.observe(this) {
-            if (it) {
-                showWindow()
-            } else {
-                if (!isNull(floatRootView)) {
-                    if (!isNull(floatRootView?.windowToken)) {
-                        if (!isNull(windowManager)) {
-                            windowManager?.removeView(floatRootView)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "InflateParams")
     private fun showWindow() {
         // 设置LayoutParam
         // 获取WindowManager服务

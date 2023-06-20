@@ -1,14 +1,11 @@
 package com.youzi.blue.ui
 
 import android.annotation.SuppressLint
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
-import android.os.IBinder
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater

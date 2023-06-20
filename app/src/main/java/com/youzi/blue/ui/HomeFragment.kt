@@ -129,7 +129,7 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
 
         simpleAdapter = SimpleAdapter(
             context,
-            data,  //data 不仅仅是数据，而是一个与界面耦合的数据混合体
+            data,
             R.layout.listviewitems,
             arrayOf<String>("deviceImage", "deviceName", "description", "state"),
             intArrayOf(R.id.device_image, R.id.device_name, R.id.description, R.id.state)
@@ -140,7 +140,7 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
         listView.adapter = simpleAdapter
         listView.setOnItemClickListener { _: AdapterView<*>, _: View, i: Int, _: Long ->
             val intent = Intent(activity, WatchContect::class.java)
-            val username = data.get(i).get("deviceName")
+            val username = data[i]["deviceName"]
             intent.putExtra("username", username.toString())
             activity?.startActivity(intent)
 
