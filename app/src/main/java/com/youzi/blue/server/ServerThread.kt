@@ -38,10 +38,10 @@ abstract class ServerThread(private var channel: Channel) : Thread(TAG) {
 
                 channel.writeAndFlush(message).addListener { f ->
                     run {
-                        if (f.isCancellable) {
+                        if (f.isSuccess) {
                             Log.d(TAG, "has send video pack to server")
                         } else {
-                            Log.d(TAG, f.cause().message)
+                            Log.d(TAG, "send video failed, reason:  " + f.cause().cause?.message)
                         }
                     }
                 }
@@ -59,7 +59,7 @@ abstract class ServerThread(private var channel: Channel) : Thread(TAG) {
                         if (f.isCancellable) {
                             Log.d(TAG, "has send voice pack to server")
                         } else {
-                            Log.d(TAG, f.cause().message)
+                            Log.d(TAG, "send voice failed, reason:  " + f.cause().cause?.message)
                         }
                     }
                 }
