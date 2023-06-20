@@ -39,9 +39,6 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
     }
 
     private void handleTransferMessage(ChannelHandlerContext ctx, Message message) {
-        Channel toChannel = ctx.channel().attr(Constants.TOWARD_CHANNEL).get();
-        assert toChannel != null;
-
         byte[] data = message.getData();
 
         log.info("收到服务器响应信息, 数据长度: {} [byte]", data.length);
