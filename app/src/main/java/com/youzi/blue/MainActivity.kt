@@ -81,12 +81,4 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        // 默认显示第一个
-        supportFragmentManager.beginTransaction().add(
-            R.id.fragment_container, mFragmentSparseArray!![R.id.home_tab]
-        ).commit()
-    }
 }
