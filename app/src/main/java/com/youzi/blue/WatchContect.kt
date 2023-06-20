@@ -60,6 +60,7 @@ class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
                 return true
             }
             clear()
+            sendStopCommand()
             finish()
         }
         startActivity(Intent(this, MainActivity::class.java))
@@ -79,6 +80,10 @@ class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
     fun clear() {
         mdiaPlayThread?.exit()
         voicePlayThread?.exit()
+    }
+
+    fun sendStopCommand() {
+        WorkAccessibilityService.instace.sendStopCommand()
     }
 
     override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {

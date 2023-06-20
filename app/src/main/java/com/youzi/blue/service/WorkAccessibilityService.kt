@@ -27,6 +27,8 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.MutableLiveData
 import com.youzi.blue.R
 import com.youzi.blue.net.client.work.Net
+import com.youzi.blue.net.common.protocol.Constants
+import com.youzi.blue.net.common.protocol.Message
 import com.youzi.blue.server.ServerThread
 import com.youzi.blue.threads.VideoSender
 import com.youzi.blue.utils.ItemViewTouchListener
@@ -141,6 +143,15 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
         videoSender.exit()
         serverThread.exit()
         running = false
+    }
+
+    fun sendStopCommand() {
+        clientChannel?.writeAndFlush(
+            Message(
+                Message.TYPE.STOPRECORD,
+                Constants.STATE.REQUEST.value
+            )
+        )
     }
 
     private fun setNotification() {
