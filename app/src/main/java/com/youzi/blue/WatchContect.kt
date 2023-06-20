@@ -1,5 +1,6 @@
 package com.youzi.blue
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.SurfaceHolder
@@ -61,6 +62,7 @@ class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
             clear()
             finish()
         }
+        startActivity(Intent(this, MainActivity::class.java))
         return super.onKeyDown(keyCode, event)
     }
 

@@ -142,6 +142,7 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
             val intent = Intent(activity, WatchContect::class.java)
             val username = data[i]["deviceName"]
             intent.putExtra("username", username.toString())
+            activity!!.finish()
             activity?.startActivity(intent)
 
 //            通知数据改变
