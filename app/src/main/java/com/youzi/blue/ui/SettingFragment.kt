@@ -18,7 +18,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.youzi.blue.R
-import com.youzi.blue.service.ScreenRecordService
 import com.youzi.blue.service.WorkAccessibilityService
 import com.youzi.blue.ui.login.LoginActivity
 import com.youzi.blue.utils.Utils
@@ -31,7 +30,6 @@ import kotlinx.android.synthetic.main.fragment_setting.*
  */
 class SettingFragment : Fragment(), View.OnClickListener {
     private var accessibilityService: WorkAccessibilityService? = null
-    private var screenRecordService: ScreenRecordService? = null
     var mediaProjectionManager: MediaProjectionManager? = null
 
     companion object {
@@ -115,20 +113,6 @@ class SettingFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    fun startRecord() {
-        if (screenRecordService == null) {
-            connectService()
-            return
-        }
-        if (!screenRecordService!!.isRunning()) {
-            screenRecordService!!.startSendServer()
-        }
-    }
-
-    fun stopRecord() {
-        screenRecordService = null
-        context?.unbindService(serviceConnection)
-    }
 
     private fun startBaseService() {
         if (!Utils.hasBasePermission(activity!!)) {
@@ -147,34 +131,10 @@ class SettingFragment : Fragment(), View.OnClickListener {
         startActivityForResult(captureIntent, 101)
     }
 
-    private fun connectService() {
-        val c=context
-        val intent = Intent(context, ScreenRecordService::class.java)
-        context?.bindService(intent, serviceConnection, AppCompatActivity.BIND_AUTO_CREATE)
-    }
-
-    private val serviceConnection: ServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            val binder: ScreenRecordService.ScreenRecordBinder =
-                service as ScreenRecordService.ScreenRecordBinder
-            screenRecordService = binder.getScreenRecordService()
-            screenRecordService?.setMediaProject(accessibilityService?.getMediaProject())
-            //初始化录屏窗口配置
-            initWindowsConfig(screenRecordService!!)
-            if (!screenRecordService!!.isRunning()) {
-                screenRecordService!!.startSendServer()
-            }
-        }
-
-        override fun onServiceDisconnected(name: ComponentName) {
-            Toast.makeText(context, "录屏服务断开！", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    fun initWindowsConfig(screenRecordService: ScreenRecordService) {
+    fun initWindowsConfig() {
         val metrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
-        screenRecordService.setConfig(
+        accessibilityService?.setConfig(
             metrics.widthPixels, metrics.heightPixels
         )
     }
@@ -184,6 +144,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
         if (requestCode == 101 && resultCode == AppCompatActivity.RESULT_OK) {
             val mediaProjection = mediaProjectionManager!!.getMediaProjection(resultCode, data!!)
             accessibilityService?.setMediaProject(mediaProjection)
+            initWindowsConfig()
             bt_01.isEnabled = false
         }
     }
