@@ -36,9 +36,14 @@ abstract class ServerThread(private var channel: Channel) : Thread(TAG) {
                 val tmp = buildVideoPack(video)
                 val message = Message(Message.TYPE.RELAY, tmp)
 
-                if (channel.isActive && channel.isWritable) {
-                    channel.writeAndFlush(message)
-                    Log.d(TAG, "has send video pack to server")
+                channel.writeAndFlush(message).addListener { f ->
+                    run {
+                        if (f.isCancellable) {
+                            Log.d(TAG, "has send video pack to server")
+                        } else {
+                            Log.d(TAG, f.cause().message)
+                        }
+                    }
                 }
 
 
@@ -49,10 +54,16 @@ abstract class ServerThread(private var channel: Channel) : Thread(TAG) {
                 val tmp = buildVoicePack(voice)
                 val message = Message(Message.TYPE.RELAY, tmp)
 
-                if (channel.isActive && channel.isWritable) {
-                    channel.writeAndFlush(message)
-                    Log.d(TAG, "has send voice pack to server")
+                channel.writeAndFlush(message).addListener { f ->
+                    run {
+                        if (f.isCancellable) {
+                            Log.d(TAG, "has send voice pack to server")
+                        } else {
+                            Log.d(TAG, f.cause().message)
+                        }
+                    }
                 }
+
 
                 bufferListVoice.remove(voice)
             }
