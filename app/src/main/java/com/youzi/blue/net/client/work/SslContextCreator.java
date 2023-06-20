@@ -8,6 +8,7 @@ import com.youzi.blue.net.common.utils.LoggerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyManagementException;
@@ -51,7 +52,8 @@ public class SslContextCreator {
             log.info("The SSL context has been initialized successfully.");
 
             return clientSSLContext;
-        } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException | CertificateException | IOException ex) {
+        } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException |
+                 CertificateException | IOException ex) {
             log.info("Unable to initialize SSL context. Cause = {}, errorMessage = {}.", ex.getCause(), ex.getMessage());
             return null;
         }
@@ -63,6 +65,7 @@ public class SslContextCreator {
         final String keyStorePassword = "123456";
         final KeyStore ks = KeyStore.getInstance("BKS");
         ks.load(jksInputStream, keyStorePassword.toCharArray());
+        jksInputStream.close();
         keyStore = ks;
     }
 
