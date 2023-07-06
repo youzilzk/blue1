@@ -4,6 +4,7 @@ import android.content.res.AssetManager;
 
 import com.youzi.blue.net.client.manager.Manager;
 import com.youzi.blue.net.common.utils.LoggerFactory;
+import com.youzi.blue.utils.OkHttp;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -11,11 +12,16 @@ import javax.net.ssl.TrustManagerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class SslContextCreator {
     private static final LoggerFactory log = LoggerFactory.getLogger();
@@ -39,8 +45,7 @@ public class SslContextCreator {
         try {
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             if (keyStore == null) {
-                AssetManager manager = Manager.getAssetManager();
-                initKeyStore(manager);
+                initKeyStore();
             }
             tmf.init(keyStore);
             TrustManager[] trustManagers = tmf.getTrustManagers();
@@ -59,13 +64,14 @@ public class SslContextCreator {
         }
     }
 
-    private static void initKeyStore(AssetManager manager) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
+    private static void initKeyStore() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
         log.info("read {}  and Initializing KeyStore...", "test.bks");
-        InputStream jksInputStream = manager.open("test.bks");
+        URL url = new URL("http://192.168.31.208:8008/file/bks");
+        InputStream inputStream = url.openStream();
         final String keyStorePassword = "123456";
         final KeyStore ks = KeyStore.getInstance("BKS");
-        ks.load(jksInputStream, keyStorePassword.toCharArray());
-        jksInputStream.close();
+        ks.load(inputStream, keyStorePassword.toCharArray());
+        inputStream.close();
         keyStore = ks;
     }
 

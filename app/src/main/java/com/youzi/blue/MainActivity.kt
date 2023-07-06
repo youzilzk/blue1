@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Manager.initAssetManager(resources.assets)
         Manager.initContext(applicationContext)
 
         setContentView(R.layout.activity_main)
