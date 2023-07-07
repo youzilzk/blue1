@@ -78,7 +78,7 @@ public class RegisterActivity extends AppCompatActivity {
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException(e);
                     }
-                    OkHttp.getInstance().httpPost("http://192.168.31.208:8008/user/register", formBody, new Callback() {
+                    OkHttp.getInstance().httpPost("http://61.243.3.19:5000/user/register", formBody, new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             Log.e("blue", "error");

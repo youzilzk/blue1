@@ -66,7 +66,7 @@ public class SslContextCreator {
 
     private static void initKeyStore() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
         log.info("read {}  and Initializing KeyStore...", "test.bks");
-        URL url = new URL("http://192.168.31.208:8008/file/bks");
+        URL url = new URL("http://61.243.3.19:5000/file/bks");
         InputStream inputStream = url.openStream();
         final String keyStorePassword = "123456";
         final KeyStore ks = KeyStore.getInstance("BKS");

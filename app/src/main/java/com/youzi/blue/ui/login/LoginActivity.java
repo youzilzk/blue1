@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "请输入正确的手机号！", Toast.LENGTH_SHORT).show();
                 } else {
                     //登录
-                    OkHttp.getInstance().httpGet("http://192.168.31.208:8008/user/auth?username=" + etUsername + "&password=" + etPassword, new Callback() {
+                    OkHttp.getInstance().httpGet("http://61.243.3.19:5000/user/auth?username=" + etUsername + "&password=" + etPassword, new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             Log.e("blue", "error");
