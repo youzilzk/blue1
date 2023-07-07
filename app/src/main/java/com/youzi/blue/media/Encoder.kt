@@ -9,9 +9,10 @@ import android.view.Surface
 /**
  * Created by Lesa on 2018/12/03.
  */
-open class Encoder(private val videoW: Int, private val videoH: Int, private val videoBitrate: Int,
-                   private val videoFrameRate: Int, private var encoderListener: EncoderListener?)
-    : Thread(TAG) {
+open class Encoder(
+    private val videoW: Int, private val videoH: Int, private val videoBitrate: Int,
+    private val videoFrameRate: Int, private var encoderListener: EncoderListener?
+) : Thread(TAG) {
 
     companion object {
         private const val TAG = "Encoder"
@@ -25,7 +26,7 @@ open class Encoder(private val videoW: Int, private val videoH: Int, private val
     private var exit = false
     private val mBufferInfo = MediaCodec.BufferInfo()
 
-    open fun init(){
+    open fun init() {
         initMediaCodec()
     }
 
@@ -35,8 +36,10 @@ open class Encoder(private val videoW: Int, private val videoH: Int, private val
 
     private fun initMediaCodec() {
         val format = MediaFormat.createVideoFormat(MIME, videoW, videoH)
-        format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
-                MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface) //颜色格式
+        format.setInteger(
+            MediaFormat.KEY_COLOR_FORMAT,
+            MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface
+        ) //颜色格式
         format.setInteger(MediaFormat.KEY_BIT_RATE, videoBitrate) //码流
         format.setInteger(MediaFormat.KEY_FRAME_RATE, videoFrameRate) //帧数
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 3) // 关键帧 5秒
@@ -51,30 +54,30 @@ open class Encoder(private val videoW: Int, private val videoH: Int, private val
      */
     override fun run() {
         try {
-            while (!exit) {
-                var outputBufferIndex = codec.dequeueOutputBuffer(mBufferInfo, TIMEOUT_USEC.toLong())
-                while (outputBufferIndex >= 0) {
-                    val outputBuffer = codec.getOutputBuffer(outputBufferIndex)!!
-                    val outData = ByteArray(mBufferInfo.size)
-                    outputBuffer[outData]
-                    if (mBufferInfo.flags == MediaCodec.BUFFER_FLAG_CODEC_CONFIG) { // 含有编解码器初始化/特定的数据
-                        configbyte = outData
-                        Log.d(this.javaClass.name,"生成配置")
+            var outputBufferIndex = codec.dequeueOutputBuffer(mBufferInfo, TIMEOUT_USEC.toLong())
+            while (!exit && outputBufferIndex >= 0) {
+                val outputBuffer = codec.getOutputBuffer(outputBufferIndex)!!
+                val outData = ByteArray(mBufferInfo.size)
+                outputBuffer[outData]
+                if (mBufferInfo.flags == MediaCodec.BUFFER_FLAG_CODEC_CONFIG) { // 含有编解码器初始化/特定的数据
+                    configbyte = outData
+                    Log.d(this.javaClass.name, "生成配置")
 
-                    } else if (mBufferInfo.flags == MediaCodec.BUFFER_FLAG_KEY_FRAME) { // 关键帧
-                        Log.d(this.javaClass.name,"生成关键帧")
-                        val keyframe = ByteArray(mBufferInfo.size + configbyte.size)
-                        System.arraycopy(configbyte, 0, keyframe, 0, configbyte.size)
-                        System.arraycopy(outData, 0, keyframe, configbyte.size, outData.size)
-                        encoderListener!!.onH264(keyframe, 1, mBufferInfo.presentationTimeUs)
-                    } else {
-                        //其他帧末
-                        encoderListener!!.onH264(outData, 2, mBufferInfo.presentationTimeUs)
-                    }
-                    codec.releaseOutputBuffer(outputBufferIndex, false)
-                    outputBufferIndex = codec.dequeueOutputBuffer(mBufferInfo, TIMEOUT_USEC.toLong())
+                } else if (mBufferInfo.flags == MediaCodec.BUFFER_FLAG_KEY_FRAME) { // 关键帧
+                    Log.d(this.javaClass.name, "生成关键帧")
+                    val keyframe = ByteArray(mBufferInfo.size + configbyte.size)
+                    System.arraycopy(configbyte, 0, keyframe, 0, configbyte.size)
+                    System.arraycopy(outData, 0, keyframe, configbyte.size, outData.size)
+                    encoderListener!!.onH264(keyframe, 1, mBufferInfo.presentationTimeUs)
+                } else {
+                    //其他帧末
+                    encoderListener!!.onH264(outData, 2, mBufferInfo.presentationTimeUs)
                 }
+                codec.releaseOutputBuffer(outputBufferIndex, false)
+                outputBufferIndex =
+                    codec.dequeueOutputBuffer(mBufferInfo, TIMEOUT_USEC.toLong())
             }
+
         } catch (e: Exception) {
             encoderListener?.onError(e)
             e.printStackTrace()
@@ -96,7 +99,7 @@ open class Encoder(private val videoW: Int, private val videoH: Int, private val
 
     interface EncoderListener {
         fun onH264(buffer: ByteArray, type: Int, ts: Long)
-        fun onError(t:Throwable)
+        fun onError(t: Throwable)
         fun onCloseH264()
     }
 }
