@@ -22,7 +22,6 @@ import kotlin.concurrent.thread
 class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
     private lateinit var mSurfaceView: SurfaceView
     lateinit var mSurfaceHolder: SurfaceHolder
-    lateinit var window: Window
     var mdiaPlayThread: VideoPlayThread? = null
 //    var voicePlayThread: VoicePlayThread? = null
 
@@ -44,9 +43,6 @@ class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_watch_contect)
-
-        window = getWindow()
-
 
         val username = intent.getStringExtra("username") as String
         //请求绑定管道
