@@ -39,7 +39,6 @@ class MediaReader(//方向宽度
 
     override fun onClose() {
         super.onClose()
-        mMediaProjection.stop()
         mVirtualDisplay?.release()
         mSurface?.release()
     }
