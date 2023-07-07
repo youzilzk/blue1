@@ -6,6 +6,7 @@ import com.youzi.blue.io.DataPack
 import com.youzi.blue.utils.toByteArray
 import com.youzi.blue.io.Writable
 import com.youzi.blue.net.common.protocol.Message
+import com.youzi.blue.service.WorkAccessibilityService
 import io.netty.channel.Channel
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -29,13 +30,14 @@ abstract class ServerThread(private var channel: Channel) : Thread(TAG) {
 
 
     override fun run() {
+        //Broken pipe 10次就退出录屏
+        var failedTime = 0
 
         while (!exit) {
             val video: Writable? = bufferListVideo.peek()
             if (video != null) {
                 val tmp = buildVideoPack(video)
                 val message = Message(Message.TYPE.RELAY, tmp)
-
                 channel.writeAndFlush(message).addListener { f ->
                     run {
                         if (f.isSuccess) {
@@ -59,7 +61,16 @@ abstract class ServerThread(private var channel: Channel) : Thread(TAG) {
                         if (f.isCancellable) {
                             Log.d(TAG, "has send voice pack to server")
                         } else {
-                            Log.d(TAG, "send voice failed, reason:  " + f.cause().cause?.message)
+                            val message1 = f.cause().cause?.message
+                            Log.d(TAG, "send voice failed, reason:  " + message1)
+
+                            //Broken pipe 大于10次就退出
+                            if (message1!!.contains("Broken pipe")) {
+                                failedTime++
+                                if (failedTime >= 10) {
+                                    WorkAccessibilityService.instace.stopRecord()
+                                }
+                            }
                         }
                     }
                 }
