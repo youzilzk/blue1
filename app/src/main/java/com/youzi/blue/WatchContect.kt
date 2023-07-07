@@ -6,6 +6,8 @@ import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.youzi.blue.net.client.manager.Manager
@@ -16,12 +18,19 @@ import com.youzi.blue.threads.VideoPlayThread
 import java.util.*
 import kotlin.concurrent.thread
 
+
 class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
     private lateinit var mSurfaceView: SurfaceView
     lateinit var mSurfaceHolder: SurfaceHolder
+    lateinit var window: Window
     var mdiaPlayThread: VideoPlayThread? = null
 //    var voicePlayThread: VoicePlayThread? = null
 
+
+    override fun onPause() {
+        super.onPause()
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
 
     override fun onResume() {
         super.onResume()
@@ -29,11 +38,15 @@ class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
         decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
         val actionBar = supportActionBar
         actionBar!!.hide()
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_watch_contect)
+
+        window = getWindow()
+
 
         val username = intent.getStringExtra("username") as String
         //请求绑定管道
@@ -54,7 +67,7 @@ class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             val currentTime = Date().time
             if (currentTime - preTime > 2000) {
-                Toast.makeText(this, getText(R.string.app_back_exit), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getText(R.string.app_back_last), Toast.LENGTH_SHORT).show()
                 preTime = currentTime
                 return true
             }

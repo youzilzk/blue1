@@ -27,7 +27,7 @@
     <string name="app_but_ok">确认</string>
     <string name="app_but_cancle">取消</string>
 
-    <string name="app_back_exit">再按一次退出程序！</string>
+    <string name="app_back_last">再按一次返回！</string>
 
     <string name="app_title_runing">正在运行</string>
 
