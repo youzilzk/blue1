@@ -13,7 +13,6 @@ import com.youzi.blue.net.common.protocol.Constants
 import com.youzi.blue.net.common.protocol.Message
 import com.youzi.blue.service.WorkAccessibilityService
 import com.youzi.blue.threads.VideoPlayThread
-import com.youzi.blue.threads.VoicePlayThread
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -21,7 +20,7 @@ class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
     private lateinit var mSurfaceView: SurfaceView
     lateinit var mSurfaceHolder: SurfaceHolder
     var mdiaPlayThread: VideoPlayThread? = null
-    var voicePlayThread: VoicePlayThread? = null
+//    var voicePlayThread: VoicePlayThread? = null
 
 
     override fun onResume() {
@@ -72,14 +71,14 @@ class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
             mdiaPlayThread =
                 VideoPlayThread(mSurfaceHolder.surface, Manager.getDataPackList())
             mdiaPlayThread!!.start()
-            voicePlayThread = VoicePlayThread(Manager.getDataPackList())
-            voicePlayThread!!.start()
+//            voicePlayThread = VoicePlayThread(Manager.getDataPackList())
+//            voicePlayThread!!.start()
         }
     }
 
     fun clear() {
         mdiaPlayThread?.exit()
-        voicePlayThread?.exit()
+//        voicePlayThread?.exit()
     }
 
     fun sendStopCommand() {
