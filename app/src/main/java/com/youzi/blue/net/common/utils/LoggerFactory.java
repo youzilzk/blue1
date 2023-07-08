@@ -3,7 +3,7 @@ package com.youzi.blue.net.common.utils;
 import android.util.Log;
 
 public class LoggerFactory {
-    private static String tag = "tunnel";
+    private static final String tag = "blue";
 
     private static LoggerFactory loggerFactory;
 
@@ -14,7 +14,18 @@ public class LoggerFactory {
         return loggerFactory;
     }
 
-    public int info(Object... args) {
+    public void info(Object... args) {
+        Log.i(tag, formatMessage(args));
+    }
+
+    public void error(Object... args) {
+        Log.e(tag, formatMessage(args));
+    }
+    public void warn(Object... args) {
+        Log.w(tag, formatMessage(args));
+    }
+
+    private String formatMessage(Object... args) {
         String msg = (String) args[0];
         StringBuilder info = new StringBuilder();
         int index;
@@ -30,9 +41,10 @@ public class LoggerFactory {
             }
             String tail = msg.contains("{}") ? msg.substring(0, msg.indexOf("{}")) : msg;
             info.append(tail);
+        } else {
+            info.append(msg);
         }
-
-        return Log.i(tag, info.toString());
+        return info.toString();
     }
 
 }

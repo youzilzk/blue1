@@ -2,6 +2,7 @@ package com.youzi.blue.service
 
 import android.accessibilityservice.AccessibilityService
 import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
@@ -39,7 +40,6 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
     private lateinit var windowManager: WindowManager
 
     var clientChannel: Channel? = null
-
 
     private var floatRootView: View? = null//悬浮窗View
     private val mLifecycleRegistry = LifecycleRegistry(this)
@@ -82,12 +82,28 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
 
     override fun onCreate() {
         instace = this
+
         super.onCreate()
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
 
         val username = getSharedPreferences("user", MODE_PRIVATE).getString("username", null)
         //联网
         clientChannel = Net(username!!).start()
+
+        /******************时钟心跳定时器**********************/
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            0,
+            Intent(this, AlarmHeartReceiver::class.java),
+            0
+        )
+        alarmManager.setInexactRepeating(
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis(),
+            15000,
+            pendingIntent
+        )
     }
 
     fun updateChannel(channel: Channel) {
@@ -102,7 +118,7 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         val outMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(outMetrics)
-        var layoutParam = WindowManager.LayoutParams()
+        val layoutParam = WindowManager.LayoutParams()
         layoutParam.apply {
             //显示的位置
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

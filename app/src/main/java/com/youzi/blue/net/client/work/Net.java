@@ -66,8 +66,6 @@ public class Net {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        // 添加连接状态监听
-        await.addListener(new ConnectListener(this));
         if (await.isSuccess()) {
             //认证
             Message message = new Message();

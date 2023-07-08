@@ -10,6 +10,7 @@ import com.youzi.blue.net.common.utils.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.UUID;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,8 +23,8 @@ public class IdleCheckHandler extends IdleStateHandler {
     private static final LoggerFactory log = LoggerFactory.getLogger();
     private static final Message heartBeatMessage = new Message(Message.TYPE.HEARTBEAT);
 
-    public static final int READ_IDLE_TIME = 8;
-    public static final int WRITE_IDLE_TIME = 5;
+    public static final int READ_IDLE_TIME = 15;
+    public static final int WRITE_IDLE_TIME = 13;
 
     public IdleCheckHandler() {
         super(READ_IDLE_TIME, WRITE_IDLE_TIME, 0);
@@ -35,7 +36,7 @@ public class IdleCheckHandler extends IdleStateHandler {
         Channel channel = ctx.channel();
 
         if (IdleState.WRITER_IDLE == evt.state()) {
-            String heartId = String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8")));
+            String heartId = UUID.randomUUID().toString().replaceAll("-", "");
             log.info("发送心跳[channelId={},heartId={}]", channel.id(), heartId);
             heartBeatMessage.setData(heartId.getBytes());
             ctx.channel().writeAndFlush(heartBeatMessage);
