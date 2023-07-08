@@ -6,11 +6,15 @@ import com.youzi.blue.net.common.protocol.Message;
 import com.youzi.blue.net.common.protocol.MessageDecoder;
 import com.youzi.blue.net.common.protocol.MessageEncoder;
 import com.youzi.blue.net.common.utils.LoggerFactory;
+
 import org.jetbrains.annotations.NotNull;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
+
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -24,13 +28,19 @@ import io.netty.handler.ssl.SslHandler;
  */
 public class Net {
     private static final LoggerFactory log = LoggerFactory.getLogger();
+    private final Bootstrap bootstrap;
+    InetSocketAddress inetAddress;
 
-    public static Channel start(@NotNull String username) throws InterruptedException {
-//        InetSocketAddress inetAddress = new InetSocketAddress("61.243.3.19", 5672);
-        InetSocketAddress inetAddress = new InetSocketAddress("61.243.3.19", 5672);
+    String username;
 
-        Bootstrap bootstrap = new Bootstrap()
-                .group(new NioEventLoopGroup())
+    public Net(@NotNull String username) {
+        this.username = username;
+        bootstrap = new Bootstrap();
+        inetAddress = new InetSocketAddress("61.243.3.19", 5672);
+    }
+
+    public Channel start() {
+        bootstrap.group(new NioEventLoopGroup())
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<NioSocketChannel>() {
 
@@ -50,7 +60,14 @@ public class Net {
                     }
                 });
         //连接服务器
-        ChannelFuture await = bootstrap.connect(inetAddress).await();
+        ChannelFuture await;
+        try {
+            await = bootstrap.connect(inetAddress).await();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        // 添加连接状态监听
+        await.addListener(new ConnectListener(this));
         if (await.isSuccess()) {
             //认证
             Message message = new Message();
@@ -61,7 +78,11 @@ public class Net {
             return await.channel();
         } else {
             log.info("连接失败");
-            await.channel().close().sync();
+            try {
+                await.channel().close().sync();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             return null;
         }
     }

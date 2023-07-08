@@ -87,7 +87,11 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
 
         val username = getSharedPreferences("user", MODE_PRIVATE).getString("username", null)
         //联网
-        clientChannel = Net.start(username!!)
+        clientChannel = Net(username!!).start()
+    }
+
+    fun updateChannel(channel: Channel) {
+        clientChannel = channel
     }
 
 
