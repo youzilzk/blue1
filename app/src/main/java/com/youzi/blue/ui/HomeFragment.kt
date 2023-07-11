@@ -1,5 +1,6 @@
 package com.youzi.blue.ui
 
+import android.accessibilityservice.AccessibilityService
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
@@ -84,10 +85,11 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
 
     fun refreshData() {
         data.clear()
-
+        val username = context?.getSharedPreferences("user", AccessibilityService.MODE_PRIVATE)
+            ?.getString("username", null)
         //登录
         OkHttp.getInstance().httpGet(
-            "http://61.243.3.19:5000/user/device",
+            "http://61.243.3.19:5000/user/device?username=$username",
             object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
                     Log.e("blue", "error")

@@ -1,18 +1,19 @@
 package com.youzi.blue.server
 
-import android.util.Log
 import com.youzi.blue.io.DataPack
-
-import com.youzi.blue.utils.toByteArray
 import com.youzi.blue.io.Writable
 import com.youzi.blue.net.common.protocol.Message
-import com.youzi.blue.service.WorkAccessibilityService
+import com.youzi.blue.net.common.utils.LoggerFactory
+import com.youzi.blue.service.BlueService
+import com.youzi.blue.utils.toByteArray
 import io.netty.channel.Channel
 import java.util.concurrent.LinkedBlockingQueue
 
-abstract class ServerThread(private var channel: Channel) : Thread(TAG) {
+abstract class ServerThread(channel: Channel) : Thread() {
+    private val log = LoggerFactory.getLogger()
+    private var clientChannel: Channel = channel
+
     companion object {
-        val TAG = ServerThread::class.java.name
         fun buildVideoPack(writable: Writable): ByteArray {
             val pack = DataPack(DataPack.TYPE_VIDEO, writable.toByteArray())
             return pack.toByteArray()
@@ -28,6 +29,9 @@ abstract class ServerThread(private var channel: Channel) : Thread(TAG) {
     var bufferListVideo: LinkedBlockingQueue<Writable> = LinkedBlockingQueue(100)
     var bufferListVoice: LinkedBlockingQueue<Writable> = LinkedBlockingQueue(100)
 
+    fun updateChannel(channel: Channel) {
+        clientChannel = channel
+    }
 
     override fun run() {
         //Broken pipe 10次就退出录屏
@@ -38,12 +42,20 @@ abstract class ServerThread(private var channel: Channel) : Thread(TAG) {
             if (video != null) {
                 val tmp = buildVideoPack(video)
                 val message = Message(Message.TYPE.RELAY, tmp)
-                channel.writeAndFlush(message).addListener { f ->
+                clientChannel.writeAndFlush(message).addListener { f ->
                     run {
                         if (f.isSuccess) {
-                            Log.d(TAG, "has send video pack to server")
+                            log.info("has send video pack to server")
                         } else {
-                            Log.d(TAG, "send video failed, reason:  " + f.cause().cause?.message)
+                            val message1 = f.cause().cause?.message
+                            //Broken pipe 大于10次就退出
+                            if (message1!!.contains("Broken pipe")) {
+                                failedTime++
+                                if (failedTime >= 10) {
+                                    BlueService.instace.stopRecord()
+                                }
+                            }
+                            log.error("send video failed, reason: {}", message1)
                         }
                     }
                 }
@@ -51,7 +63,7 @@ abstract class ServerThread(private var channel: Channel) : Thread(TAG) {
 
                 bufferListVideo.remove(video)
             }
-            val voice: Writable? = bufferListVoice.peek()
+            /*val voice: Writable? = bufferListVoice.peek()
             if (voice != null) {
                 val tmp = buildVoicePack(voice)
                 val message = Message(Message.TYPE.RELAY, tmp)
@@ -59,10 +71,10 @@ abstract class ServerThread(private var channel: Channel) : Thread(TAG) {
                 channel.writeAndFlush(message).addListener { f ->
                     run {
                         if (f.isCancellable) {
-                            Log.d(TAG, "has send voice pack to server")
+                            log.info("has send voice pack to server")
                         } else {
                             val message1 = f.cause().cause?.message
-                            Log.d(TAG, "send voice failed, reason:  " + message1)
+                            log.error("send voice failed, reason:  " + message1)
 
                             //Broken pipe 大于10次就退出
                             if (message1!!.contains("Broken pipe")) {
@@ -77,7 +89,7 @@ abstract class ServerThread(private var channel: Channel) : Thread(TAG) {
 
 
                 bufferListVoice.remove(voice)
-            }
+            }*/
         }
     }
 
@@ -90,7 +102,7 @@ abstract class ServerThread(private var channel: Channel) : Thread(TAG) {
     }
 
     fun exit() {
-        Log.d(TAG, "退出中")
+        log.warn("退出中")
         exit = true
         interrupt()
     }

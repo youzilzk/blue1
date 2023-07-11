@@ -6,14 +6,13 @@ import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
-import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.youzi.blue.net.client.manager.Manager
 import com.youzi.blue.net.common.protocol.Constants
 import com.youzi.blue.net.common.protocol.Message
-import com.youzi.blue.service.WorkAccessibilityService
+import com.youzi.blue.service.BlueService
 import com.youzi.blue.threads.VideoPlayThread
 import java.util.*
 import kotlin.concurrent.thread
@@ -47,11 +46,11 @@ class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
         val username = intent.getStringExtra("username") as String
         //请求绑定管道
         val message = Message(Message.TYPE.RELEVANT, username.encodeToByteArray())
-        WorkAccessibilityService.instace.clientChannel?.writeAndFlush(message)
+        BlueService.instace.clientChannel?.writeAndFlush(message)
 
         //请求开启命令
         val message1 = Message(Message.TYPE.STARTRECORD, Constants.STATE.REQUEST.value)
-        WorkAccessibilityService.instace.clientChannel?.writeAndFlush(message1)
+        BlueService.instace.clientChannel?.writeAndFlush(message1)
 
         mSurfaceView = findViewById<SurfaceView>(R.id.surfaceView_watch)
         mSurfaceHolder = mSurfaceView.holder
@@ -91,7 +90,7 @@ class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
     }
 
     fun sendStopCommand() {
-        WorkAccessibilityService.instace.sendStopCommand()
+        BlueService.instace.sendStopCommand()
     }
 
     override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {

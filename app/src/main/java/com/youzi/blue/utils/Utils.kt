@@ -10,7 +10,7 @@ import android.provider.Settings
 import android.text.TextUtils
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.youzi.blue.service.WorkAccessibilityService
+import com.youzi.blue.service.BlueService
 import java.util.*
 
 
@@ -89,7 +89,7 @@ object Utils {
      * 检查无障碍服务权限是否开启
      */
     fun isAccessibilityRunning(context: Activity): Boolean {
-        return WorkAccessibilityService::class.java.canonicalName?.let {
+        return BlueService::class.java.canonicalName?.let {
             isServiceRunning(
                 context,
                 it

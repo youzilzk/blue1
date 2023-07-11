@@ -4,7 +4,7 @@ package com.youzi.blue.net.client.handlers;
 import com.youzi.blue.net.client.manager.Manager;
 import com.youzi.blue.net.common.protocol.Message;
 import com.youzi.blue.net.common.utils.LoggerFactory;
-import com.youzi.blue.service.WorkAccessibilityService;
+import com.youzi.blue.service.BlueService;
 import io.netty.channel.*;
 
 
@@ -49,12 +49,12 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
 
     private void handleStartRecordMessage(ChannelHandlerContext ctx, Message message) {
         log.info("启动录屏[{}]", ctx.channel().id());
-        WorkAccessibilityService.instace.startSendServer();
+        BlueService.instace.startSendServer();
     }
 
     private void handleStopRecordMessage(ChannelHandlerContext ctx, Message message) {
         log.info("停止录屏[{}]", ctx.channel().id());
-        WorkAccessibilityService.instace.stopRecord();
+        BlueService.instace.stopRecord();
     }
 
     @Override

@@ -31,12 +31,12 @@ import com.youzi.blue.net.client.work.Net
 import com.youzi.blue.net.common.protocol.Constants
 import com.youzi.blue.net.common.protocol.Message
 import com.youzi.blue.server.ServerThread
+import com.youzi.blue.service.ScreenListener.ScreenStateListener
 import com.youzi.blue.threads.VideoSender
-import com.youzi.blue.utils.ItemViewTouchListener
 import io.netty.channel.Channel
 
 
-class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
+class BlueService : AccessibilityService(), LifecycleOwner {
     private lateinit var windowManager: WindowManager
 
     var clientChannel: Channel? = null
@@ -47,7 +47,7 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
     /************************/
     companion object {
         @SuppressLint("StaticFieldLeak")
-        lateinit var instace: WorkAccessibilityService
+        lateinit var instace: BlueService
 
         //无障碍服务运行状态
         var isAccessibilityRunning = MutableLiveData<Boolean>()
@@ -62,7 +62,7 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
 
     /*******************************/
 
-    private var running = false
+    private var recordRunning = false
     private var width = 720
     private var height = 1080
 
@@ -77,8 +77,8 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
     private lateinit var videoSender: VideoSender
     private val handle: Handler = Handler()
 
-    /*******************************/
-
+    /***************监听息屏和亮屏****************/
+    private lateinit var screenListener: ScreenListener
 
     override fun onCreate() {
         instace = this
@@ -90,12 +90,13 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
         //联网
         clientChannel = Net(username!!).start()
 
-        /******************时钟心跳定时器**********************/
+        /******************屏幕监听时钟心跳定时器**********************/
+        //刚开启此服务是亮屏, 默认开始时钟网络检测
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         val pendingIntent = PendingIntent.getBroadcast(
-            this,
+            this@BlueService,
             0,
-            Intent(this, AlarmHeartReceiver::class.java),
+            Intent(this@BlueService, AlarmHeartReceiver::class.java),
             0
         )
         alarmManager.setInexactRepeating(
@@ -104,10 +105,38 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
             15000,
             pendingIntent
         )
+
+        screenListener = ScreenListener(this)
+
+        screenListener.register(object : ScreenStateListener {
+            override fun onScreenOn() {
+                //亮屏
+            }
+
+            override fun onScreenOff() {
+                //黑屏
+                alarmManager.cancel(pendingIntent)
+            }
+
+            override fun onUserPresent() {
+                //解锁成功
+                alarmManager.setInexactRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    System.currentTimeMillis(),
+                    15000,
+                    pendingIntent
+                )
+            }
+        })
+
     }
 
     fun updateChannel(channel: Channel) {
         clientChannel = channel
+        //网络变化, 如果录屏在运行, 则更新发送管道
+        if (isRecordRunning()) {
+            serverThread.updateChannel(channel)
+        }
     }
 
 
@@ -136,9 +165,11 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
             width = WindowManager.LayoutParams.WRAP_CONTENT
             height = WindowManager.LayoutParams.WRAP_CONTENT
             format = PixelFormat.TRANSPARENT
+            x = width
+            y = height / 10
         }
         floatRootView = LayoutInflater.from(this).inflate(R.layout.activity_float_item, null)
-        floatRootView?.setOnTouchListener(ItemViewTouchListener(layoutParam, windowManager))
+        //floatRootView?.setOnTouchListener(ItemViewTouchListener(layoutParam, windowManager))
         windowManager.addView(floatRootView, layoutParam)
     }
 
@@ -152,7 +183,7 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
                 width, height,
                 2 * 1920 * 1080, 18
             )
-            running = true
+            recordRunning = true
         } catch (throwable: Throwable) {
             throwable.printStackTrace()
             return
@@ -162,7 +193,7 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
     fun stopRecord() {
         videoSender.exit()
         serverThread.exit()
-        running = false
+        recordRunning = false
     }
 
     fun sendStopCommand() {
@@ -192,10 +223,10 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
                     // 2个service分别startForeground，然后只在1个service里stopForeground，这样即可去掉通知栏的显示
                     val helpService: Service = (binder as HelpService.LocalBinder)
                         .getService()
-                    this@WorkAccessibilityService.startForeground(PID, getNotification())
+                    this@BlueService.startForeground(PID, getNotification())
                     helpService.startForeground(PID, getNotification())
                     helpService.stopForeground(true)
-                    this@WorkAccessibilityService.unbindService(mConnection!!)
+                    this@BlueService.unbindService(mConnection!!)
                     mConnection = null
                 }
             }
@@ -210,7 +241,7 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
         Log.i("blue", "notification: " + Build.VERSION.SDK_INT)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             //Call Start foreground with notification
-            val notificationIntent = Intent(this, WorkAccessibilityService::class.java)
+            val notificationIntent = Intent(this, BlueService::class.java)
             val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
             val notificationBuilder = NotificationCompat.Builder(this, "CHANNEL_ID")
                 .setLargeIcon(
@@ -231,8 +262,8 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
         return null
     }
 
-    fun isRunning(): Boolean {
-        return running
+    fun isRecordRunning(): Boolean {
+        return recordRunning
     }
 
     fun setConfig(width: Int, height: Int) {
@@ -243,10 +274,10 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
     private inner class SendThread :
         ServerThread(clientChannel!!) {
         override fun onError(t: Throwable) {
-            running = false
+            recordRunning = false
             handle.post {
                 Toast.makeText(
-                    this@WorkAccessibilityService,
+                    this@BlueService,
                     "服务开启失败:${t.message}",
                     Toast.LENGTH_SHORT
                 ).show()
@@ -274,6 +305,7 @@ class WorkAccessibilityService : AccessibilityService(), LifecycleOwner {
 
     override fun onDestroy() {
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+        screenListener.unregister()
         super.onDestroy()
     }
 

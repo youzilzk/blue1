@@ -15,7 +15,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.youzi.blue.R
-import com.youzi.blue.service.WorkAccessibilityService
+import com.youzi.blue.service.BlueService
 import com.youzi.blue.ui.login.LoginActivity
 import com.youzi.blue.utils.Utils
 import kotlinx.android.synthetic.main.fragment_setting.*
@@ -26,7 +26,7 @@ import kotlinx.android.synthetic.main.fragment_setting.*
  * create an instance of this fragment.
  */
 class SettingFragment : Fragment(), View.OnClickListener {
-    private var accessibilityService: WorkAccessibilityService? = null
+    private var accessibilityService: BlueService? = null
     var mediaProjectionManager: MediaProjectionManager? = null
 
     companion object {
@@ -85,9 +85,9 @@ class SettingFragment : Fragment(), View.OnClickListener {
         when (v) {
             bt_01 -> {
                 if (!Utils.isAccessibilityRunning(activity!!)) {
-                    WorkAccessibilityService.isAccessibilityRunning.observe(activity!!) {
+                    BlueService.isAccessibilityRunning.observe(activity!!) {
                         if (it) {
-                            accessibilityService = WorkAccessibilityService.instace
+                            accessibilityService = BlueService.instace
                             applyCapture()
                         }
                     }
@@ -166,8 +166,8 @@ class SettingFragment : Fragment(), View.OnClickListener {
     override fun onResume() {
         super.onResume()
         if (Utils.isAccessibilityRunning(activity!!)) {
-            if (WorkAccessibilityService.isAccessibilityRunning.value != true) {
-                WorkAccessibilityService.isAccessibilityRunning.postValue(true)
+            if (BlueService.isAccessibilityRunning.value != true) {
+                BlueService.isAccessibilityRunning.postValue(true)
             }
         }
     }
