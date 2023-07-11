@@ -9,6 +9,7 @@ import android.view.*
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.SimpleAdapter
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
@@ -110,10 +111,11 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
                             item["deviceName"] = i.get("username").toString()
                             item["description"] =
                                 "俄国人为符合规范鹅嘎王菲和瑞特个人房屋我和如果文特人格奉化人提供服务和如果无法和各位"
-                            val isOnline = i["state"] as Int
-                            if (isOnline == 1)
+
+                            val state = i["state"] as Int
+                            if (state == 1)
                                 item["state"] = R.drawable.state_green
-                            else if (isOnline == 0)
+                            else if (state == 0)
                                 item["state"] = R.drawable.state_gray
                             else
                                 item["state"] = R.drawable.state_yellow
@@ -146,6 +148,13 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
         listView.setOnItemClickListener { _: AdapterView<*>, _: View, i: Int, _: Long ->
             val intent = Intent(activity, WatchContect::class.java)
             val username = data[i]["deviceName"]
+
+            val state = data[i]["state"]
+            if (state != R.drawable.state_green) {
+                Toast.makeText(context, getText(R.string.device_offline), Toast.LENGTH_SHORT).show()
+                return@setOnItemClickListener
+            }
+
             intent.putExtra("username", username.toString())
             activity!!.finish()
             activity?.startActivity(intent)
