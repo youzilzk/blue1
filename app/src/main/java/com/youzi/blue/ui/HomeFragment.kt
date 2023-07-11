@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
 import com.youzi.blue.R
 import com.youzi.blue.WatchContect
+import com.youzi.blue.service.BlueService
 import com.youzi.blue.utils.OkHttp
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_setting.*
@@ -146,14 +147,19 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
 
         listView.adapter = simpleAdapter
         listView.setOnItemClickListener { _: AdapterView<*>, _: View, i: Int, _: Long ->
-            val intent = Intent(activity, WatchContect::class.java)
-            val username = data[i]["deviceName"]
-
+            if (BlueService.isAccessibilityRunning.value != true) {
+                Toast.makeText(context, getText(R.string.base_service_offline), Toast.LENGTH_SHORT)
+                    .show()
+                return@setOnItemClickListener
+            }
             val state = data[i]["state"]
             if (state != R.drawable.state_green) {
                 Toast.makeText(context, getText(R.string.device_offline), Toast.LENGTH_SHORT).show()
                 return@setOnItemClickListener
             }
+
+            val intent = Intent(activity, WatchContect::class.java)
+            val username = data[i]["deviceName"]
 
             intent.putExtra("username", username.toString())
             activity!!.finish()
