@@ -101,7 +101,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
         )
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
-            System.currentTimeMillis(),
+            System.currentTimeMillis() - 14000,
             15000,
             pendingIntent
         )
