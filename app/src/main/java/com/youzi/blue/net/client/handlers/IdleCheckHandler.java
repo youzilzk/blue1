@@ -36,9 +36,7 @@ public class IdleCheckHandler extends IdleStateHandler {
         Channel channel = ctx.channel();
 
         if (IdleState.WRITER_IDLE == evt.state()) {
-            String heartId = UUID.randomUUID().toString().replaceAll("-", "");
-            log.info("发送心跳[channelId={},heartId={}]", channel.id(), heartId);
-            heartBeatMessage.setData(heartId.getBytes());
+            log.info("发送心跳[channelId={}]", channel.id());
             ctx.channel().writeAndFlush(heartBeatMessage);
         }
     }

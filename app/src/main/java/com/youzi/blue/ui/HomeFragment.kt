@@ -8,11 +8,9 @@ import android.view.*
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.SimpleAdapter
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
-import com.youzi.blue.MainActivity
 import com.youzi.blue.R
 import com.youzi.blue.WatchContect
 import com.youzi.blue.utils.OkHttp
@@ -110,9 +108,14 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
                             item["deviceName"] = i.get("username").toString()
                             item["description"] =
                                 "俄国人为符合规范鹅嘎王菲和瑞特个人房屋我和如果文特人格奉化人提供服务和如果无法和各位"
-                            val isOnline = i["online"] as Boolean
-                            item["state"] =
-                                if (isOnline) R.drawable.state_green else R.drawable.state_gray
+                            val isOnline = i["state"] as Int
+                            if (isOnline == 1)
+                                item["state"] = R.drawable.state_green
+                            else if (isOnline == 0)
+                                item["state"] = R.drawable.state_gray
+                            else
+                                item["state"] = R.drawable.state_yellow
+
                             data.add(item)
                         }
                     }
