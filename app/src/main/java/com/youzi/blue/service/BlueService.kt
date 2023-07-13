@@ -143,7 +143,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
 
     }
 
-    fun updateChannel(channel: Channel) {
+    fun updateChannel(channel: Channel?) {
         clientChannel = channel
         //网络变化, 如果录屏在运行, 则更新发送管道
         if (isRecordRunning()) {

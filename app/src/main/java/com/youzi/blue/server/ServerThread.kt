@@ -11,7 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue
 
 abstract class ServerThread(channel: Channel) : Thread() {
     private val log = LoggerFactory.getLogger()
-    private var clientChannel: Channel = channel
+    private var clientChannel: Channel? = channel
 
     companion object {
         fun buildVideoPack(writable: Writable): ByteArray {
@@ -29,33 +29,42 @@ abstract class ServerThread(channel: Channel) : Thread() {
     var bufferListVideo: LinkedBlockingQueue<Writable> = LinkedBlockingQueue(100)
     var bufferListVoice: LinkedBlockingQueue<Writable> = LinkedBlockingQueue(100)
 
-    fun updateChannel(channel: Channel) {
+    fun updateChannel(channel: Channel?) {
         clientChannel = channel
     }
 
     override fun run() {
-        //Broken pipe 10次就退出录屏
+        //Broken pipe 15次就退出录屏
         var failedTime = 0
 
         while (!exit) {
             val video: Writable? = bufferListVideo.peek()
             if (video != null) {
-                val tmp = buildVideoPack(video)
-                val message = Message(Message.TYPE.RELAY, tmp)
-                clientChannel.writeAndFlush(message).addListener { f ->
-                    run {
-                        if (f.isSuccess) {
-                            log.info("has send video pack to server")
-                        } else {
-                            val message1 = f.cause().cause?.message
-                            //Broken pipe 大于10次就退出
-                            if (message1!!.contains("Broken pipe")) {
-                                failedTime++
-                                if (failedTime >= 10) {
-                                    BlueService.instace.stopRecord()
+                if (clientChannel == null) {
+                    failedTime++
+                    if (failedTime >= 15) {
+                        BlueService.instace.stopRecord()
+                    }
+                    sleep(1000)
+                } else {
+                    val tmp = buildVideoPack(video)
+                    val message = Message(Message.TYPE.RELAY, tmp)
+
+                    clientChannel?.writeAndFlush(message)?.addListener { f ->
+                        run {
+                            if (f.isSuccess) {
+                                log.info("has send video pack to server")
+                            } else {
+                                val message1 = f.cause().cause?.message
+                                //Broken pipe 大于15次就退出
+                                if (message1!!.contains("Broken pipe")) {
+                                    failedTime++
+                                    if (failedTime >= 15) {
+                                        BlueService.instace.stopRecord()
+                                    }
                                 }
+                                log.error("send video failed, reason: {}", message1)
                             }
-                            log.error("send video failed, reason: {}", message1)
                         }
                     }
                 }
