@@ -28,8 +28,10 @@ class VideoPlayThread(var surface: Surface, var inputdata: DataPackList) : Threa
             if (videoPack != null) {
                 if (!hasInitVideo) {
                     Log.d(TAG, "video pack init $videoPack")
-                    initVideoDecoder(videoPack.width, videoPack.height,
-                            videoPack.videoBitrate, videoPack.videoFrameRate)
+                    initVideoDecoder(
+                        videoPack.width, videoPack.height,
+                        videoPack.videoBitrate, videoPack.videoFrameRate
+                    )
                     hasInitVideo = true
                     try {
                         sleep(1000)
@@ -37,14 +39,22 @@ class VideoPlayThread(var surface: Surface, var inputdata: DataPackList) : Threa
                         e.printStackTrace()
                     }
                 }
-                videodecoder.onFrame(videoPack.frames, 0, videoPack.frames.size, videoPack.presentationTimeUs)
+                videodecoder.onFrame(
+                    videoPack.frames,
+                    0,
+                    videoPack.frames.size,
+                    videoPack.presentationTimeUs
+                )
             }
         }
         dirtory()
     }
 
     private fun dirtory() {
-        videodecoder.release()
+        //有数据才会初始化解码器,这里防止空指针
+        if (hasInitVideo) {
+            videodecoder.release()
+        }
         Log.i(TAG, "退出成功")
     }
 

@@ -5,6 +5,7 @@ import com.youzi.blue.net.client.manager.Manager;
 import com.youzi.blue.net.common.protocol.Message;
 import com.youzi.blue.net.common.utils.LoggerFactory;
 import com.youzi.blue.service.BlueService;
+
 import io.netty.channel.*;
 
 
@@ -28,6 +29,9 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
                 break;
             case STOPRECORD:
                 handleStopRecordMessage(ctx, message);
+                break;
+            case LINKCHECK:
+                handleLinkCheckMessage(ctx, message);
                 break;
             default:
                 break;
@@ -55,6 +59,10 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
     private void handleStopRecordMessage(ChannelHandlerContext ctx, Message message) {
         log.info("停止录屏[{}]", ctx.channel().id());
         BlueService.instace.stopRecord();
+    }
+
+    private void handleLinkCheckMessage(ChannelHandlerContext ctx, Message message) {
+        log.info("检查链路结果[{}]", new String(message.getData()));
     }
 
     @Override

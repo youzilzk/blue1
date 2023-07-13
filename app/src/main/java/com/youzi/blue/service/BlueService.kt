@@ -30,6 +30,7 @@ import com.youzi.blue.R
 import com.youzi.blue.net.client.work.Net
 import com.youzi.blue.net.common.protocol.Constants
 import com.youzi.blue.net.common.protocol.Message
+import com.youzi.blue.net.common.utils.LoggerFactory
 import com.youzi.blue.server.ServerThread
 import com.youzi.blue.service.ScreenListener.ScreenStateListener
 import com.youzi.blue.threads.VideoSender
@@ -37,6 +38,9 @@ import io.netty.channel.Channel
 
 
 class BlueService : AccessibilityService(), LifecycleOwner {
+    private val log = LoggerFactory.getLogger()
+    private lateinit var username: String
+
     private lateinit var windowManager: WindowManager
 
     var clientChannel: Channel? = null
@@ -86,29 +90,24 @@ class BlueService : AccessibilityService(), LifecycleOwner {
         super.onCreate()
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
 
-        val username = getSharedPreferences("user", MODE_PRIVATE).getString("username", null)
+        username = getSharedPreferences("user", MODE_PRIVATE).getString("username", null) as String
         //联网
-        clientChannel = Net(username!!).start()
+        clientChannel = Net(username).start()
 
         /******************屏幕监听时钟心跳定时器**********************/
         //刚开启此服务是亮屏, 默认开始时钟网络检测
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-        val pendingIntent = PendingIntent.getBroadcast(
-            this@BlueService,
-            0,
-            Intent(this@BlueService, AlarmHeartReceiver::class.java),
-            0
-        )
-        alarmManager.setInexactRepeating(
-            AlarmManager.RTC_WAKEUP,
-            System.currentTimeMillis() - 14000,
-            15000,
-            pendingIntent
-        )
 
         screenListener = ScreenListener(this)
 
         screenListener.register(object : ScreenStateListener {
+            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+            val pendingIntent = PendingIntent.getBroadcast(
+                this@BlueService,
+                0,
+                Intent(this@BlueService, AlarmHeartReceiver::class.java),
+                0
+            )
+
             override fun onScreenOn() {
                 //亮屏
             }
@@ -120,6 +119,8 @@ class BlueService : AccessibilityService(), LifecycleOwner {
 
             override fun onUserPresent() {
                 //解锁成功
+                checkNetwork()
+                //时钟检测网络
                 alarmManager.setInexactRepeating(
                     AlarmManager.RTC_WAKEUP,
                     System.currentTimeMillis(),
@@ -128,6 +129,17 @@ class BlueService : AccessibilityService(), LifecycleOwner {
                 )
             }
         })
+
+    }
+
+    fun checkNetwork() {
+        log.info("检测网络状态!")
+        if (clientChannel == null || !clientChannel!!.isActive) {
+            log.warn("网络重连!")
+            val channel = Net(username).start()
+
+            updateChannel(channel)
+        }
 
     }
 
@@ -174,6 +186,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
     }
 
     fun startSendServer() {
+        log.info(mediaProjection.toString())
         setNotification()
         serverThread = SendThread()
         serverThread.start()

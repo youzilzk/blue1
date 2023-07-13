@@ -21,7 +21,10 @@ public class Message {
 
         STARTRECORD(5),
 
-        STOPRECORD(6);
+        STOPRECORD(6),
+
+        LINKCHECK(7);
+
         public final byte value;
 
         TYPE(int value) {

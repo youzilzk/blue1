@@ -44,6 +44,7 @@ class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
         setContentView(R.layout.activity_watch_contect)
 
         val username = intent.getStringExtra("username") as String
+
         //请求绑定管道
         val message = Message(Message.TYPE.RELEVANT, username.encodeToByteArray())
         BlueService.instace.clientChannel?.writeAndFlush(message)
