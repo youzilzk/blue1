@@ -54,6 +54,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initWindowsConfig()
         if (arguments != null) {
             mContentText = arguments!!.getString(ARG_SHOW_TEXT)
         }
@@ -141,7 +142,6 @@ class SettingFragment : Fragment(), View.OnClickListener {
         if (requestCode == 101 && resultCode == AppCompatActivity.RESULT_OK) {
             val mediaProjection = mediaProjectionManager!!.getMediaProjection(resultCode, data!!)
             accessibilityService?.setMediaProject(mediaProjection)
-            initWindowsConfig()
             bt_01.isEnabled = false
         }
     }

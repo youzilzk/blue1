@@ -67,8 +67,8 @@ class BlueService : AccessibilityService(), LifecycleOwner {
     /*******************************/
 
     private var recordRunning = false
-    private var width = 720
-    private var height = 1080
+    private var screen_width = 720
+    private var screen_height = 1080
 
     /******************通知相关,录屏必须要通知***********************/
 
@@ -174,11 +174,11 @@ class BlueService : AccessibilityService(), LifecycleOwner {
             }
             flags =
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            width = WindowManager.LayoutParams.WRAP_CONTENT
-            height = WindowManager.LayoutParams.WRAP_CONTENT
+            width = 1
+            height = 1
             format = PixelFormat.TRANSPARENT
-            x = width
-            y = height / 10
+            x = screen_width
+            y = screen_height/10
         }
         floatRootView = LayoutInflater.from(this).inflate(R.layout.activity_float_item, null)
         //floatRootView?.setOnTouchListener(ItemViewTouchListener(layoutParam, windowManager))
@@ -193,7 +193,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
         try {
             videoSender = VideoSender(
                 serverThread, mediaProjection!!,
-                width, height,
+                screen_width, screen_height,
                 2 * 1920 * 1080, 18
             )
             recordRunning = true
@@ -280,8 +280,8 @@ class BlueService : AccessibilityService(), LifecycleOwner {
     }
 
     fun setConfig(width: Int, height: Int) {
-        this.width = width
-        this.height = height
+        this.screen_width = width
+        this.screen_height = height
     }
 
     private inner class SendThread :
