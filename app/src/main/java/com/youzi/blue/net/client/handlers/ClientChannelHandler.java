@@ -3,8 +3,8 @@ package com.youzi.blue.net.client.handlers;
 
 import com.youzi.blue.net.client.manager.Manager;
 import com.youzi.blue.net.common.protocol.Message;
-import com.youzi.blue.net.common.utils.LoggerFactory;
 import com.youzi.blue.service.BlueService;
+import com.youzi.blue.utils.LoggerFactory;
 
 import io.netty.channel.*;
 
@@ -52,8 +52,14 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
     }
 
     private void handleStartRecordMessage(ChannelHandlerContext ctx, Message message) {
-        log.info("启动录屏[{}]", ctx.channel().id());
-        BlueService.instace.startSendServer();
+        BlueService blueService = BlueService.instace;
+        if (!blueService.isRecordRunning()) {
+            log.info("启动录屏[{}]", ctx.channel().id());
+            blueService.startSendServer();
+        } else {
+            log.info("已在录屏[{}]", ctx.channel().id());
+        }
+
     }
 
     private void handleStopRecordMessage(ChannelHandlerContext ctx, Message message) {

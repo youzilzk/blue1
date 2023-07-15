@@ -1,7 +1,7 @@
 package com.youzi.blue.net.common;
 
 
-import com.youzi.blue.net.common.utils.LoggerFactory;
+import com.youzi.blue.utils.LoggerFactory;
 
 public class LangUtil {
 

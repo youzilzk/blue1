@@ -3,13 +3,13 @@ package com.youzi.blue.server
 import com.youzi.blue.io.DataPack
 import com.youzi.blue.io.Writable
 import com.youzi.blue.net.common.protocol.Message
-import com.youzi.blue.net.common.utils.LoggerFactory
 import com.youzi.blue.service.BlueService
+import com.youzi.blue.utils.LoggerFactory
 import com.youzi.blue.utils.toByteArray
 import io.netty.channel.Channel
 import java.util.concurrent.LinkedBlockingQueue
 
-abstract class ServerThread(channel: Channel) : Thread() {
+abstract class SendServerThread(channel: Channel) : Thread() {
     private val log = LoggerFactory.getLogger()
     private var clientChannel: Channel? = channel
 

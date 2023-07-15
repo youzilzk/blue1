@@ -1,6 +1,8 @@
 package com.youzi.blue.net.common.utils;
 
 
+import com.youzi.blue.utils.LoggerFactory;
+
 public class SystemUtils {
     private static final LoggerFactory log = LoggerFactory.getLogger();
 

@@ -2,11 +2,12 @@ package com.youzi.blue.media
 
 import android.media.MediaCodec
 import android.media.MediaFormat
-import android.util.Log
 import android.view.Surface
-import java.io.IOException
+import com.youzi.blue.utils.LoggerFactory
 
 class Decoder(width: Int, height: Int, fps: Int, surface: Surface) {
+    private val log = LoggerFactory.getLogger()
+
     private lateinit var mCodec: MediaCodec
     private val mSurface: Surface
     private var VIDEO_WIDTH = 1440
@@ -18,10 +19,14 @@ class Decoder(width: Int, height: Int, fps: Int, surface: Surface) {
      */
     fun init() {
         mCodec = MediaCodec.createDecoderByType(MIME_TYPE)
-        val mediaFormat = MediaFormat.createVideoFormat(MIME_TYPE,
-                VIDEO_WIDTH, VIDEO_HEIGHT)
-        mCodec.configure(mediaFormat, mSurface,
-                null, 0)
+        val mediaFormat = MediaFormat.createVideoFormat(
+            MIME_TYPE,
+            VIDEO_WIDTH, VIDEO_HEIGHT
+        )
+        mCodec.configure(
+            mediaFormat, mSurface,
+            null, 0
+        )
         mCodec.start()
     }
 
@@ -49,7 +54,7 @@ class Decoder(width: Int, height: Int, fps: Int, surface: Surface) {
             }
             return true
         } catch (e: Throwable) {
-            Log.e("Media", "onFrame faile")
+            log.info("onFrame faile")
             e.printStackTrace()
             return false
         }

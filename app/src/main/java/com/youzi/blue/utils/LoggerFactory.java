@@ -1,9 +1,9 @@
-package com.youzi.blue.net.common.utils;
+package com.youzi.blue.utils;
 
 import android.util.Log;
 
 public class LoggerFactory {
-    private static final String tag = "blue";
+    private final String tag = "blue";
 
     private static LoggerFactory loggerFactory;
 
@@ -21,6 +21,7 @@ public class LoggerFactory {
     public void error(Object... args) {
         Log.e(tag, formatMessage(args));
     }
+
     public void warn(Object... args) {
         Log.w(tag, formatMessage(args));
     }

@@ -1,6 +1,6 @@
 package com.youzi.blue.net.common.protocol;
  
-import com.youzi.blue.net.common.utils.LoggerFactory;
+import com.youzi.blue.utils.LoggerFactory;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

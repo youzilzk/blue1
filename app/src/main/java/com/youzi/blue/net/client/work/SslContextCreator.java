@@ -1,10 +1,6 @@
 package com.youzi.blue.net.client.work;
 
-import android.content.res.AssetManager;
-
-import com.youzi.blue.net.client.manager.Manager;
-import com.youzi.blue.net.common.utils.LoggerFactory;
-import com.youzi.blue.utils.OkHttp;
+import com.youzi.blue.utils.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -18,10 +14,6 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class SslContextCreator {
     private static final LoggerFactory log = LoggerFactory.getLogger();

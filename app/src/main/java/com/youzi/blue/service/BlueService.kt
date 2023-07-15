@@ -17,10 +17,8 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Process
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.*
 import android.view.accessibility.AccessibilityEvent
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -30,10 +28,10 @@ import com.youzi.blue.R
 import com.youzi.blue.net.client.work.Net
 import com.youzi.blue.net.common.protocol.Constants
 import com.youzi.blue.net.common.protocol.Message
-import com.youzi.blue.net.common.utils.LoggerFactory
-import com.youzi.blue.server.ServerThread
+import com.youzi.blue.server.SendServerThread
 import com.youzi.blue.service.ScreenListener.ScreenStateListener
-import com.youzi.blue.threads.VideoSender
+import com.youzi.blue.threads.VideoRecorder
+import com.youzi.blue.utils.LoggerFactory
 import io.netty.channel.Channel
 
 
@@ -77,8 +75,8 @@ class BlueService : AccessibilityService(), LifecycleOwner {
 
     /******************************************/
 
-    private lateinit var serverThread: ServerThread
-    private lateinit var videoSender: VideoSender
+    private lateinit var sendThread: SendServerThread
+    private lateinit var videoRecorder: VideoRecorder
     private val handle: Handler = Handler()
 
     /***************监听息屏和亮屏****************/
@@ -147,7 +145,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
         clientChannel = channel
         //网络变化, 如果录屏在运行, 则置空(不再更新发送管道, 因为之前管道已死亡, 重现绑定管道太繁琐)
         if (isRecordRunning()) {
-            serverThread.setChannelIsNull()
+            sendThread.setChannelIsNull()
         }
     }
 
@@ -178,13 +176,16 @@ class BlueService : AccessibilityService(), LifecycleOwner {
             }
             flags =
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+            //一像素悬浮窗
             width = 1
             height = 1
             format = PixelFormat.TRANSPARENT
+            //悬浮窗位置靠边
             x = screen_width
             y = screen_height / 10
         }
         floatRootView = LayoutInflater.from(this).inflate(R.layout.activity_float_item, null)
+        //悬浮窗移动
         //floatRootView?.setOnTouchListener(ItemViewTouchListener(layoutParam, windowManager))
         windowManager.addView(floatRootView, layoutParam)
     }
@@ -192,25 +193,29 @@ class BlueService : AccessibilityService(), LifecycleOwner {
     fun startSendServer() {
         log.info(mediaProjection.toString())
         setNotification()
-        serverThread = SendThread()
-        serverThread.start()
+        sendThread = SendThread()
+        sendThread.start()
         try {
-            videoSender = VideoSender(
-                serverThread, mediaProjection!!,
+            videoRecorder = VideoRecorder(
+                sendThread, mediaProjection!!,
                 screen_width, screen_height,
-                2 * 1920 * 1080, 18
+                1920 * 1080, 24
             )
             recordRunning = true
         } catch (throwable: Throwable) {
             throwable.printStackTrace()
+            sendThread.exit
             return
         }
     }
 
     fun stopRecord() {
-        videoSender.exit()
-        serverThread.exit()
-        recordRunning = false
+        if (recordRunning) {
+            videoRecorder.exit()
+            sendThread.exit()
+            recordRunning = false
+        }
+
     }
 
     fun sendStopCommand() {
@@ -231,11 +236,11 @@ class BlueService : AccessibilityService(), LifecycleOwner {
         if (null == mConnection) {
             mConnection = object : ServiceConnection {
                 override fun onServiceDisconnected(name: ComponentName) {
-                    Log.d("blue", "ForegroundService: onServiceDisconnected")
+                    log.info("ForegroundService: onServiceDisconnected")
                 }
 
                 override fun onServiceConnected(name: ComponentName, binder: IBinder) {
-                    Log.d("blue", "ForegroundService: onServiceConnected")
+                    log.info("ForegroundService: onServiceConnected")
                     // sdk >= 18 的，会在通知栏显示service正在运行，这里不要让用户感知，所以这里的实现方式是利用2个同进程的service，利用相同的notificationID，
                     // 2个service分别startForeground，然后只在1个service里stopForeground，这样即可去掉通知栏的显示
                     val helpService: Service = (binder as HelpService.LocalBinder)
@@ -255,7 +260,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
     }
 
     private fun getNotification(): Notification? {
-        Log.i("blue", "notification: " + Build.VERSION.SDK_INT)
+        log.info("notification: {}", Build.VERSION.SDK_INT)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             //Call Start foreground with notification
             val notificationIntent = Intent(this, BlueService::class.java)
@@ -283,22 +288,11 @@ class BlueService : AccessibilityService(), LifecycleOwner {
         return recordRunning
     }
 
-    fun setConfig(width: Int, height: Int) {
-        this.screen_width = width
-        this.screen_height = height
-    }
-
     private inner class SendThread :
-        ServerThread(clientChannel!!) {
+        SendServerThread(clientChannel!!) {
         override fun onError(t: Throwable) {
             recordRunning = false
-            handle.post {
-                Toast.makeText(
-                    this@BlueService,
-                    "服务开启失败:${t.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            log.error("服务开启失败: {}", t.message)
         }
     }
 

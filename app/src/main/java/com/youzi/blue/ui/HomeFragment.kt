@@ -4,7 +4,6 @@ import android.accessibilityservice.AccessibilityService
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ListView
@@ -16,6 +15,7 @@ import com.alibaba.fastjson.JSONObject
 import com.youzi.blue.R
 import com.youzi.blue.WatchContect
 import com.youzi.blue.service.BlueService
+import com.youzi.blue.utils.LoggerFactory
 import com.youzi.blue.utils.OkHttp
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_setting.*
@@ -31,6 +31,7 @@ import java.io.IOException
  * create an instance of this fragment.
  */
 class HomeFragment : Fragment()/*, View.OnClickListener*/ {
+    private val log = LoggerFactory.getLogger()
 
     //列表显示的数据
     private val data: ArrayList<HashMap<String, Any>> = ArrayList()
@@ -94,7 +95,7 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
             "http://61.243.3.19:5000/user/device?username=$username",
             object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
-                    Log.e("blue", "error")
+                    log.info("refresh data error!")
                 }
 
                 @Throws(IOException::class)

@@ -5,7 +5,7 @@ import android.util.Log
 import com.youzi.blue.media.AACEncoder
 import com.youzi.blue.io.VoicePack
 import com.youzi.blue.media.MyAudioRecord
-import com.youzi.blue.server.ServerThread
+import com.youzi.blue.server.SendServerThread
 
 /**
  *
@@ -16,7 +16,7 @@ import com.youzi.blue.server.ServerThread
  * @param ByteRate [AacFormat.ByteRate256Kbs]
  * @param SampleRate [AacFormat.SampleRate44100]
  */
-class VoiceSender(var socketServer: ServerThread,
+class VoiceSender(var socketServer: SendServerThread,
                   var ChannelMode: Int, var EncodeFormat: Int,
                   var ChannelCount: Int, var ByteRate: Int,
                   var SampleRate: Int

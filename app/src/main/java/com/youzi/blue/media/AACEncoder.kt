@@ -3,9 +3,7 @@ package com.youzi.blue.media
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
 import android.media.MediaFormat
-import android.util.Log
-import com.youzi.blue.media.AacAdstUtil
-import com.youzi.blue.media.AacFormat
+import com.youzi.blue.utils.LoggerFactory
 
 /**
  *
@@ -18,25 +16,22 @@ import com.youzi.blue.media.AacFormat
  * @param SampleRate 采样频率
  * [AacFormat.SampleRate44100] [AacFormat.SampleRate48000]
  */
-class AACEncoder(val ChannelCount: Int,val ByteRate: Int, val SampleRate: Int) {
-
-    companion object {
-        private val TAG = AACEncoder::class.java.name
-    }
+class AACEncoder(val ChannelCount: Int, val ByteRate: Int, val SampleRate: Int) {
+    private val log = LoggerFactory.getLogger()
 
     init {
-        Log.d(TAG, "ChannelCount:$ChannelCount ByteRate:$ByteRate SampleRate:$SampleRate")
+        log.info("ChannelCount:$ChannelCount ByteRate:$ByteRate SampleRate:$SampleRate")
     }
 
     var NOW_TIME = System.currentTimeMillis()
 
     private lateinit var mEncoder: MediaCodec
-    private val  mBufferInfo= MediaCodec.BufferInfo()
+    private val mBufferInfo = MediaCodec.BufferInfo()
 
     private val MIME_TYPE = "audio/mp4a-latm"
 
     private val KEY_AAC_PROFILE = MediaCodecInfo.CodecProfileLevel.AACObjectLC
-    private var mFrameByte: ByteArray?=null
+    private var mFrameByte: ByteArray? = null
     private var onEncodeDone: OnEncodeDone? = null
 
 
@@ -47,13 +42,19 @@ class AACEncoder(val ChannelCount: Int,val ByteRate: Int, val SampleRate: Int) {
         NOW_TIME = System.currentTimeMillis()
 
         mEncoder = MediaCodec.createEncoderByType(MIME_TYPE)
-        val mediaFormat = MediaFormat.createAudioFormat(MIME_TYPE,
-                SampleRate, ChannelCount)
+        val mediaFormat = MediaFormat.createAudioFormat(
+            MIME_TYPE,
+            SampleRate, ChannelCount
+        )
         mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, ByteRate)
-        mediaFormat.setInteger(MediaFormat.KEY_AAC_PROFILE,
-                KEY_AAC_PROFILE)
-        mEncoder.configure(mediaFormat, null, null,
-                MediaCodec.CONFIGURE_FLAG_ENCODE)
+        mediaFormat.setInteger(
+            MediaFormat.KEY_AAC_PROFILE,
+            KEY_AAC_PROFILE
+        )
+        mEncoder.configure(
+            mediaFormat, null, null,
+            MediaCodec.CONFIGURE_FLAG_ENCODE
+        )
         mEncoder.start()
     }
 
@@ -68,8 +69,10 @@ class AACEncoder(val ChannelCount: Int,val ByteRate: Int, val SampleRate: Int) {
             inputBuffer.clear()
             inputBuffer.put(data)
             inputBuffer.limit(data.size)
-            mEncoder.queueInputBuffer(inputBufferIndex, 0, data.size,
-                    System.nanoTime(), 0)
+            mEncoder.queueInputBuffer(
+                inputBufferIndex, 0, data.size,
+                System.nanoTime(), 0
+            )
         }
         var outputBufferIndex = mEncoder.dequeueOutputBuffer(mBufferInfo, 0)
         while (outputBufferIndex >= 0) {
@@ -77,21 +80,25 @@ class AACEncoder(val ChannelCount: Int,val ByteRate: Int, val SampleRate: Int) {
             //给adts头字段空出7的字节
             val length = mBufferInfo.size + 7
 
-            if (mFrameByte == null ) {
+            if (mFrameByte == null) {
                 mFrameByte = ByteArray(length)
             }
             mFrameByte?.also {
-                if (it.size<length){
-                    mFrameByte=ByteArray(length)
+                if (it.size < length) {
+                    mFrameByte = ByteArray(length)
                 }
             }
-            AacAdstUtil.addADTStoPacketType(mFrameByte, AacAdstUtil.TYPE_MEPG_2, AacAdstUtil.UNUSE_CRC,
-                    AacAdstUtil.AAC_LC,
-                    if (SampleRate == AacFormat.SampleRate44100) AacAdstUtil.SAMPLING_RATE_44_1KHZ else AacAdstUtil.SAMPLING_RATE_48KHZ,
-                    ChannelCount, length)
+            AacAdstUtil.addADTStoPacketType(
+                mFrameByte, AacAdstUtil.TYPE_MEPG_2, AacAdstUtil.UNUSE_CRC,
+                AacAdstUtil.AAC_LC,
+                if (SampleRate == AacFormat.SampleRate44100) AacAdstUtil.SAMPLING_RATE_44_1KHZ else AacAdstUtil.SAMPLING_RATE_48KHZ,
+                ChannelCount, length
+            )
             outputBuffer[mFrameByte, 7, mBufferInfo.size]
-            if (onEncodeDone != null) onEncodeDone!!.onEncodeData(mFrameByte!!, 0, length,
-                    System.currentTimeMillis() - NOW_TIME)
+            if (onEncodeDone != null) onEncodeDone!!.onEncodeData(
+                mFrameByte!!, 0, length,
+                System.currentTimeMillis() - NOW_TIME
+            )
             mEncoder.releaseOutputBuffer(outputBufferIndex, false)
             outputBufferIndex = mEncoder.dequeueOutputBuffer(mBufferInfo, 0)
         }

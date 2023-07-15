@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import com.youzi.blue.net.common.utils.LoggerFactory;
+import com.youzi.blue.utils.LoggerFactory;
 
 public class ScreenListener {
     private final LoggerFactory log = LoggerFactory.getLogger();

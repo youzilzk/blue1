@@ -5,7 +5,7 @@ import com.youzi.blue.net.client.handlers.IdleCheckHandler;
 import com.youzi.blue.net.common.protocol.Message;
 import com.youzi.blue.net.common.protocol.MessageDecoder;
 import com.youzi.blue.net.common.protocol.MessageEncoder;
-import com.youzi.blue.net.common.utils.LoggerFactory;
+import com.youzi.blue.utils.LoggerFactory;
 
 import org.jetbrains.annotations.NotNull;
 

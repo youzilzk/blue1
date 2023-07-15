@@ -6,8 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
-import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.youzi.blue.R
 import com.youzi.blue.service.BlueService
 import com.youzi.blue.ui.login.LoginActivity
+import com.youzi.blue.utils.LoggerFactory
 import com.youzi.blue.utils.Utils
 import kotlinx.android.synthetic.main.fragment_setting.*
 
@@ -26,6 +25,8 @@ import kotlinx.android.synthetic.main.fragment_setting.*
  * create an instance of this fragment.
  */
 class SettingFragment : Fragment(), View.OnClickListener {
+    private val log = LoggerFactory.getLogger()
+
     private var accessibilityService: BlueService? = null
     var mediaProjectionManager: MediaProjectionManager? = null
 
@@ -147,7 +148,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
                     context, "请设置必须的应用权限，否则将会导致运行异常！", Toast.LENGTH_SHORT
                 ).show()
             } else if (grantResults.size != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                Log.i("", "授权成功")
+                log.info( "授权成功")
             }
         }
     }

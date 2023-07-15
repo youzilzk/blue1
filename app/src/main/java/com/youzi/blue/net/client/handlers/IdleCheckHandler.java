@@ -6,11 +6,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.youzi.blue.net.common.protocol.Message;
-import com.youzi.blue.net.common.utils.LoggerFactory;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.UUID;
+import com.youzi.blue.utils.LoggerFactory;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -36,7 +32,7 @@ public class IdleCheckHandler extends IdleStateHandler {
         Channel channel = ctx.channel();
 
         if (IdleState.WRITER_IDLE == evt.state()) {
-            log.info("发送心跳[channelId={}]", channel.id());
+            log.info("心跳发送[{}]", channel.id());
             ctx.channel().writeAndFlush(heartBeatMessage);
         }
     }

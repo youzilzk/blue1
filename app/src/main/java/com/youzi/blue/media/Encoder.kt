@@ -3,8 +3,8 @@ package com.youzi.blue.media
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
 import android.media.MediaFormat
-import android.util.Log
 import android.view.Surface
+import com.youzi.blue.utils.LoggerFactory
 
 /**
  * Created by Lesa on 2018/12/03.
@@ -12,10 +12,10 @@ import android.view.Surface
 open class Encoder(
     private val videoW: Int, private val videoH: Int, private val videoBitrate: Int,
     private val videoFrameRate: Int, private var encoderListener: EncoderListener?
-) : Thread(TAG) {
+) : Thread() {
+    private val log = LoggerFactory.getLogger()
 
     companion object {
-        private const val TAG = "Encoder"
         private const val MIME = "Video/AVC"
     }
 
@@ -63,10 +63,10 @@ open class Encoder(
                     outputBuffer[outData]
                     if (mBufferInfo.flags == MediaCodec.BUFFER_FLAG_CODEC_CONFIG) { // 含有编解码器初始化/特定的数据
                         configbyte = outData
-                        Log.d(this.javaClass.name, "生成配置")
+                        log.info("生成配置")
 
                     } else if (mBufferInfo.flags == MediaCodec.BUFFER_FLAG_KEY_FRAME) { // 关键帧
-                        Log.d(this.javaClass.name, "生成关键帧")
+                        log.info("生成关键帧")
                         val keyframe = ByteArray(mBufferInfo.size + configbyte.size)
                         System.arraycopy(configbyte, 0, keyframe, 0, configbyte.size)
                         System.arraycopy(outData, 0, keyframe, configbyte.size, outData.size)
