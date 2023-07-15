@@ -29,8 +29,8 @@ abstract class ServerThread(channel: Channel) : Thread() {
     var bufferListVideo: LinkedBlockingQueue<Writable> = LinkedBlockingQueue(100)
     var bufferListVoice: LinkedBlockingQueue<Writable> = LinkedBlockingQueue(100)
 
-    fun updateChannel(channel: Channel?) {
-        clientChannel = channel
+    fun setChannelIsNull() {
+        clientChannel = null
     }
 
     override fun run() {
@@ -41,11 +41,8 @@ abstract class ServerThread(channel: Channel) : Thread() {
             val video: Writable? = bufferListVideo.peek()
             if (video != null) {
                 if (clientChannel == null) {
-                    failedTime++
-                    if (failedTime >= 15) {
-                        BlueService.instace.stopRecord()
-                    }
-                    sleep(1000)
+                    log.error("网络断开, 停止录屏!")
+                    BlueService.instace.stopRecord()
                 } else {
                     val tmp = buildVideoPack(video)
                     val message = Message(Message.TYPE.RELAY, tmp)

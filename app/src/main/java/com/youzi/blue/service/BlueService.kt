@@ -145,9 +145,9 @@ class BlueService : AccessibilityService(), LifecycleOwner {
 
     fun updateChannel(channel: Channel?) {
         clientChannel = channel
-        //网络变化, 如果录屏在运行, 则更新发送管道
+        //网络变化, 如果录屏在运行, 则置空(不再更新发送管道, 因为之前管道已死亡, 重现绑定管道太繁琐)
         if (isRecordRunning()) {
-            serverThread.updateChannel(channel)
+            serverThread.setChannelIsNull()
         }
     }
 
