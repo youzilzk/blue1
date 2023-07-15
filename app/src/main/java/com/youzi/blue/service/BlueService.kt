@@ -154,11 +154,15 @@ class BlueService : AccessibilityService(), LifecycleOwner {
 
     @SuppressLint("ClickableViewAccessibility", "InflateParams")
     private fun showWindow() {
-        // 设置LayoutParam
         // 获取WindowManager服务
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-        val outMetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(outMetrics)
+        //屏幕宽高
+        val metrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(metrics)
+        screen_width = metrics.widthPixels
+        screen_height = metrics.heightPixels
+
+        // 设置LayoutParam
         val layoutParam = WindowManager.LayoutParams()
         layoutParam.apply {
             //显示的位置
@@ -178,7 +182,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
             height = 1
             format = PixelFormat.TRANSPARENT
             x = screen_width
-            y = screen_height/10
+            y = screen_height / 10
         }
         floatRootView = LayoutInflater.from(this).inflate(R.layout.activity_float_item, null)
         //floatRootView?.setOnTouchListener(ItemViewTouchListener(layoutParam, windowManager))

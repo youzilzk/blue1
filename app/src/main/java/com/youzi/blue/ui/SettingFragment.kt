@@ -54,7 +54,6 @@ class SettingFragment : Fragment(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initWindowsConfig()
         if (arguments != null) {
             mContentText = arguments!!.getString(ARG_SHOW_TEXT)
         }
@@ -127,14 +126,6 @@ class SettingFragment : Fragment(), View.OnClickListener {
         //开启录屏请求intent
         val captureIntent = mediaProjectionManager?.createScreenCaptureIntent()
         startActivityForResult(captureIntent, 101)
-    }
-
-    fun initWindowsConfig() {
-        val metrics = DisplayMetrics()
-        activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
-        accessibilityService?.setConfig(
-            metrics.widthPixels, metrics.heightPixels
-        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
