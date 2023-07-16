@@ -15,14 +15,14 @@ import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
 
 
-public class HeartCheckHandler extends IdleStateHandler {
+public class HearterCheckHandler extends IdleStateHandler {
     private static final LoggerFactory log = LoggerFactory.getLogger();
     private static final Message heartBeatMessage = new Message(Message.TYPE.HEARTBEAT);
 
     public static final int READ_IDLE_TIME = 15;
     public static final int WRITE_IDLE_TIME = 13;
 
-    public HeartCheckHandler() {
+    public HearterCheckHandler() {
         super(READ_IDLE_TIME, WRITE_IDLE_TIME, 0);
     }
 
