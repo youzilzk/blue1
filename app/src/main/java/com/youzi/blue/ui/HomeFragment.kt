@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
 import com.youzi.blue.R
-import com.youzi.blue.WatchContect
 import com.youzi.blue.service.BlueService
 import com.youzi.blue.utils.LoggerFactory
 import com.youzi.blue.utils.OkHttp

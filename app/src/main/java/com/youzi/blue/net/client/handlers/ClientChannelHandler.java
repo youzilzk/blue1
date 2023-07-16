@@ -75,8 +75,8 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         Channel channel = ctx.channel();
         channel.close().sync();
-        log.info("链路关闭[channelId={}], message: {}", channel.id(), cause.getMessage());
         super.exceptionCaught(ctx, cause);
+        log.info("链路关闭[channelId={}], message: {}", channel.id(), cause.getMessage());
     }
 
 }

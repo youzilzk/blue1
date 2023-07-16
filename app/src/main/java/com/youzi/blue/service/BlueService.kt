@@ -13,7 +13,6 @@ import android.graphics.BitmapFactory
 import android.graphics.PixelFormat
 import android.media.projection.MediaProjection
 import android.os.Build
-import android.os.Handler
 import android.os.IBinder
 import android.os.Process
 import android.util.DisplayMetrics
@@ -44,7 +43,6 @@ class BlueService : AccessibilityService(), LifecycleOwner {
     var clientChannel: Channel? = null
 
     private var floatRootView: View? = null//悬浮窗View
-    private val mLifecycleRegistry = LifecycleRegistry(this)
 
     /************************/
     companion object {
@@ -77,7 +75,6 @@ class BlueService : AccessibilityService(), LifecycleOwner {
 
     private lateinit var sendThread: SendServerThread
     private lateinit var videoRecorder: VideoRecorder
-    private val handle: Handler = Handler()
 
     /***************监听息屏和亮屏****************/
     private lateinit var screenListener: ScreenListener
@@ -86,17 +83,36 @@ class BlueService : AccessibilityService(), LifecycleOwner {
         instace = this
 
         super.onCreate()
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
 
         username = getSharedPreferences("user", MODE_PRIVATE).getString("username", null) as String
         //联网
         clientChannel = Net(username).start()
 
-        /******************屏幕监听时钟心跳定时器**********************/
+
+        /****************************网络监听********************************/
+        val networkListener = NetworkListener()
+        val netChangeListener = object : NetworkListener.NetChangeListener {
+            override fun onWifi() {
+                checkNetwork()
+            }
+
+            override fun onMobile() {
+                checkNetwork()
+            }
+
+            override fun onDisconnected() {
+                //断网, 如果录屏在运行, 则置空(不再更新发送管道, 因为之前管道已死亡, 重现绑定管道太繁琐)
+                if (isRecordRunning()) {
+                    sendThread.setChannelIsNull()
+                }
+            }
+        }
+        //服务开启时屏幕肯定是亮屏,所以开启网络状态监听
+        networkListener.register(netChangeListener, applicationContext)
+
+        /*************************屏幕监听时钟心跳定时器*****************************/
         //刚开启此服务是亮屏, 默认开始时钟网络检测
-
         screenListener = ScreenListener(this)
-
         screenListener.register(object : ScreenStateListener {
             val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
             val pendingIntent = PendingIntent.getBroadcast(
@@ -112,17 +128,22 @@ class BlueService : AccessibilityService(), LifecycleOwner {
 
             override fun onScreenOff() {
                 //黑屏
+                //取消时钟检测
                 alarmManager.cancel(pendingIntent)
+                networkListener.unRegister()
             }
 
             override fun onUserPresent() {
                 //解锁成功
-                checkNetwork()
+                //网络状态监听
+                networkListener.register(netChangeListener, applicationContext)
+
+                /*****************************************************************/
                 //时钟检测网络
                 alarmManager.setInexactRepeating(
                     AlarmManager.RTC_WAKEUP,
                     System.currentTimeMillis(),
-                    15000,
+                    60000,
                     pendingIntent
                 )
             }
@@ -131,7 +152,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
     }
 
     fun checkNetwork() {
-        log.info("检测网络状态!")
+        log.info("检测网络链路!")
         if (clientChannel == null || !clientChannel!!.isActive) {
             log.warn("网络重连!")
             val channel = Net(username).start()
@@ -241,7 +262,8 @@ class BlueService : AccessibilityService(), LifecycleOwner {
 
                 override fun onServiceConnected(name: ComponentName, binder: IBinder) {
                     log.info("ForegroundService: onServiceConnected")
-                    // sdk >= 18 的，会在通知栏显示service正在运行，这里不要让用户感知，所以这里的实现方式是利用2个同进程的service，利用相同的notificationID，
+                    // sdk >= 18 的，会在通知栏显示service正在运行，这里不要让用户感知，
+                    // 所以这里的实现方式是利用2个同进程的service，利用相同的notificationID，
                     // 2个service分别startForeground，然后只在1个service里stopForeground，这样即可去掉通知栏的显示
                     val helpService: Service = (binder as HelpService.LocalBinder)
                         .getService()
@@ -262,7 +284,6 @@ class BlueService : AccessibilityService(), LifecycleOwner {
     private fun getNotification(): Notification? {
         log.info("notification: {}", Build.VERSION.SDK_INT)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //Call Start foreground with notification
             val notificationIntent = Intent(this, BlueService::class.java)
             val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
             val notificationBuilder = NotificationCompat.Builder(this, "CHANNEL_ID")
@@ -300,22 +321,18 @@ class BlueService : AccessibilityService(), LifecycleOwner {
     override fun onServiceConnected() {
         super.onServiceConnected()
         showWindow()
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
     }
 
-    override fun getLifecycle(): Lifecycle = mLifecycleRegistry
+    override fun getLifecycle(): Lifecycle = LifecycleRegistry(this)
     override fun onStart(intent: Intent?, startId: Int) {
         super.onStart(intent, startId)
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
         return super.onUnbind(intent)
     }
 
     override fun onDestroy() {
-        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         screenListener.unregister()
         super.onDestroy()
     }

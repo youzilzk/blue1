@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.youzi.blue">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
@@ -51,7 +52,7 @@
             android:name=".ui.SignActivity"
             android:exported="true" />
         <activity
-            android:name=".WatchContect"
+            android:name=".ui.WatchContect"
             android:exported="true" />
 
 
@@ -70,6 +71,13 @@
         </service>
         <!-- 时钟心跳接收者-->
         <receiver android:name=".service.AlarmHeartReceiver" />
+        <!--监听网络变化-->
+        <receiver android:name=".service.NetworkListener">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"
+                    tools:ignore="BatteryLife" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

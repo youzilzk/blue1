@@ -1,4 +1,4 @@
-package com.youzi.blue
+package com.youzi.blue.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +9,8 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.youzi.blue.MainActivity
+import com.youzi.blue.R
 import com.youzi.blue.net.client.manager.Manager
 import com.youzi.blue.net.common.protocol.Constants
 import com.youzi.blue.net.common.protocol.Message
