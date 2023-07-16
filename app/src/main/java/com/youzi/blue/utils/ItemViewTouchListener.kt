@@ -5,7 +5,7 @@ import android.view.View
 import android.view.WindowManager
 
 
-class ItemViewTouchListener(val wl: WindowManager.LayoutParams, val windowManager: WindowManager) :
+class ItemViewTouchListener(private val wl: WindowManager.LayoutParams, private val windowManager: WindowManager) :
     View.OnTouchListener {
     private var x = 0
     private var y = 0
@@ -28,7 +28,7 @@ class ItemViewTouchListener(val wl: WindowManager.LayoutParams, val windowManage
                     y += movedY
                 }
                 //更新悬浮球控件位置
-                windowManager?.updateViewLayout(view, wl)
+                windowManager.updateViewLayout(view, wl)
             }
             else -> {
 

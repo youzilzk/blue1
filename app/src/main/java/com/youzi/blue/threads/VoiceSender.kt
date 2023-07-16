@@ -4,7 +4,7 @@ import android.media.MediaRecorder
 import android.util.Log
 import com.youzi.blue.media.AACEncoder
 import com.youzi.blue.io.VoicePack
-import com.youzi.blue.media.MyAudioRecord
+import com.youzi.blue.media.AudioRecord
 import com.youzi.blue.server.SendServerThread
 
 /**
@@ -20,12 +20,14 @@ class VoiceSender(var socketServer: SendServerThread,
                   var ChannelMode: Int, var EncodeFormat: Int,
                   var ChannelCount: Int, var ByteRate: Int,
                   var SampleRate: Int
-) : AACEncoder.OnEncodeDone, MyAudioRecord.OnDataInput {
+) : AACEncoder.OnEncodeDone, AudioRecord.OnDataInput {
 
     val TAG = VoiceSender::class.java.name
     private val aacEncoder: AACEncoder = AACEncoder(ChannelCount, ByteRate, SampleRate)
-    private val  myAudioRecord = MyAudioRecord(MediaRecorder.AudioSource.MIC,
-            SampleRate, ChannelMode, EncodeFormat)
+    private val  audioRecord = AudioRecord(
+        MediaRecorder.AudioSource.MIC,
+        SampleRate, ChannelMode, EncodeFormat
+    )
 
     override fun onEncodeData(bytes: ByteArray, offset: Int, len: Int, ts: Long) {
         val voicePack = VoicePack(ChannelMode, EncodeFormat, ChannelCount,
@@ -35,7 +37,7 @@ class VoiceSender(var socketServer: SendServerThread,
 
     fun exit() {
         Log.d(TAG, "退出中")
-        myAudioRecord.release()
+        audioRecord.release()
     }
 
     override fun onClose() {
@@ -56,8 +58,8 @@ class VoiceSender(var socketServer: SendServerThread,
     init {
         aacEncoder.setOnEncodeDone(this)
         aacEncoder.init()
-        myAudioRecord.setOnDataInput(this)
-        myAudioRecord.init()
-        myAudioRecord.start()
+        audioRecord.setOnDataInput(this)
+        audioRecord.init()
+        audioRecord.start()
     }
 }

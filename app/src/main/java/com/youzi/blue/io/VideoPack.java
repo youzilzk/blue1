@@ -1,6 +1,7 @@
 package com.youzi.blue.io;
 
-import com.youzi.blue.io.Writable;
+
+import androidx.annotation.NonNull;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -62,15 +63,14 @@ public class VideoPack implements Writable {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("width:");
-        buffer.append(width);
-        buffer.append(" height:");
-        buffer.append(height);
-        buffer.append(" presentationTimeUs:");
-        buffer.append(presentationTimeUs);
-        return buffer.toString();
+        return "width:" +
+                width +
+                " height:" +
+                height +
+                " presentationTimeUs:" +
+                presentationTimeUs;
     }
 }

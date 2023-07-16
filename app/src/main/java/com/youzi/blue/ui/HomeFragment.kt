@@ -158,7 +158,7 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
                 return@setOnItemClickListener
             }
 
-            val intent = Intent(activity, WatchContect::class.java)
+            val intent = Intent(activity, WatchContent::class.java)
             val username = data[i]["deviceName"]
 
             intent.putExtra("username", username.toString())

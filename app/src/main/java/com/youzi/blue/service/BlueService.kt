@@ -118,7 +118,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
             val pendingIntent = PendingIntent.getBroadcast(
                 this@BlueService,
                 0,
-                Intent(this@BlueService, AlarmHeartReceiver::class.java),
+                Intent(this@BlueService, AlarmHeartbeat::class.java),
                 0
             )
 

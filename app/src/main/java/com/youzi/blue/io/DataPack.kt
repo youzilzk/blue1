@@ -1,6 +1,5 @@
 package com.youzi.blue.io
 
-import com.youzi.blue.io.Writable
 import java.io.DataInput
 import java.io.DataOutput
 
@@ -9,8 +8,8 @@ class DataPack() : Writable {
     lateinit var byteArray: ByteArray
 
     companion object{
-        val TYPE_VIDEO=1
-        val TYPE_VOICE=2
+        const val TYPE_VIDEO=1
+        const val TYPE_VOICE=2
     }
 
     constructor(var1: DataInput):this(){

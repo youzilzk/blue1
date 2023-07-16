@@ -7,7 +7,7 @@ import android.content.Intent;
 
 import com.youzi.blue.utils.LoggerFactory;
 
-public class AlarmHeartReceiver extends BroadcastReceiver {
+public class AlarmHeartbeat extends BroadcastReceiver {
     private final LoggerFactory log = LoggerFactory.getLogger();
 
     @Override

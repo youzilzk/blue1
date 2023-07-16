@@ -33,7 +33,6 @@ public class SslContextCreator {
 
     private static SSLContext initSSLContext() {
         log.info("Checking SSL configuration properties...");
-        final String jksPath = "test.bks";
         try {
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             if (keyStore == null) {

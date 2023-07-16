@@ -52,7 +52,7 @@
             android:name=".ui.SignActivity"
             android:exported="true" />
         <activity
-            android:name=".ui.WatchContect"
+            android:name=".ui.WatchContent"
             android:exported="true" />
 
 
@@ -70,11 +70,12 @@
                 android:resource="@xml/allocation" />
         </service>
         <!-- 时钟心跳接收者-->
-        <receiver android:name=".service.AlarmHeartReceiver" />
+        <receiver android:name=".service.AlarmHeartbeat" />
         <!--监听网络变化-->
         <receiver android:name=".service.NetworkListener">
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"
+                <action
+                    android:name="android.net.conn.CONNECTIVITY_CHANGE"
                     tools:ignore="BatteryLife" />
             </intent-filter>
         </receiver>

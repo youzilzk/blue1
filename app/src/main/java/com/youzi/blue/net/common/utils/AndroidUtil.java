@@ -118,6 +118,4 @@ public class AndroidUtil {
         }
         return null;
     }
-
-
 }

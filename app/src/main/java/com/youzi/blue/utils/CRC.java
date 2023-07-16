@@ -4,7 +4,6 @@ public class CRC {
     /**
      * 计算CRC16校验码
      *
-     * @param bytes
      * @return
      */
     public static String getStringCRC(byte[] bytes) {

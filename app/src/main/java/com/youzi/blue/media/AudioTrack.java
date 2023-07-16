@@ -2,17 +2,16 @@ package com.youzi.blue.media;
 
 import android.media.AudioFormat;
 import android.media.AudioManager;
-import android.media.AudioTrack;
 import android.util.Log;
 
 
-public class MyAudioTrack {
+public class AudioTrack {
 
 
     private int mFrequency;// 采样率
     private int mChannel;// 声道
     private int mSampBit;// 采样精度
-    private AudioTrack mAudioTrack;
+    private android.media.AudioTrack mAudioTrack;
     private int mStreamType;
 
     /**
@@ -31,7 +30,7 @@ public class MyAudioTrack {
      *{@link AudioManager#STREAM_RING}, {@link AudioManager#STREAM_MUSIC},
      *{@link AudioManager#STREAM_ALARM}, and {@link AudioManager#STREAM_NOTIFICATION}.
      */
-    public MyAudioTrack(int frequency, int channel, int sampbit,int streamType) {
+    public AudioTrack(int frequency, int channel, int sampbit, int streamType) {
         this.mFrequency = frequency;
         this.mChannel = channel;
         this.mSampBit = sampbit;
@@ -47,8 +46,8 @@ public class MyAudioTrack {
         }
         // 获得构建对象的最小缓冲区大小
         int minBufSize = getMinBufferSize();
-        mAudioTrack = new AudioTrack(mStreamType,
-                mFrequency, mChannel, mSampBit, minBufSize, AudioTrack.MODE_STREAM);
+        mAudioTrack = new android.media.AudioTrack(mStreamType,
+                mFrequency, mChannel, mSampBit, minBufSize, android.media.AudioTrack.MODE_STREAM);
         mAudioTrack.play();
     }
 
@@ -81,7 +80,7 @@ public class MyAudioTrack {
     }
 
     public int getMinBufferSize() {
-        return AudioTrack.getMinBufferSize(mFrequency,
+        return android.media.AudioTrack.getMinBufferSize(mFrequency,
                 mChannel, mSampBit);
     }
 

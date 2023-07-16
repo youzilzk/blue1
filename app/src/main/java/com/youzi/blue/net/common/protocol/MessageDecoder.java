@@ -1,6 +1,5 @@
 package com.youzi.blue.net.common.protocol;
  
-import com.youzi.blue.utils.LoggerFactory;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -9,8 +8,6 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import java.nio.charset.Charset;
  
 public class MessageDecoder extends LengthFieldBasedFrameDecoder {
-    private static LoggerFactory log = LoggerFactory.getLogger();
-
     /**
      * 拆包参数
      */

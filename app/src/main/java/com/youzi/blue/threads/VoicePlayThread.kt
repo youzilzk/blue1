@@ -6,14 +6,14 @@ import android.util.Log
 import com.youzi.blue.io.VoicePack
 import com.youzi.blue.media.AACDecoder
 import com.youzi.blue.media.AACDecoder.OnDecodeDone
-import com.youzi.blue.media.MyAudioTrack
+import com.youzi.blue.media.AudioTrack
 import com.youzi.blue.server.DataPackList
 
 class VoicePlayThread(var inputdata: DataPackList) : Thread(TAG), OnDecodeDone {
 
     var exit = false
     lateinit var aacDecoder: AACDecoder
-    lateinit var myAudioTrack: MyAudioTrack
+    lateinit var audioTrack: AudioTrack
     var hasInitVoice = false
 
     companion object {
@@ -23,9 +23,11 @@ class VoicePlayThread(var inputdata: DataPackList) : Thread(TAG), OnDecodeDone {
     private fun initVoiceDecoder(ChannelMode: Int, EncodeFormat: Int, ChannelCount: Int,
                                  ByteRate: Int, SampleRate: Int) {
         val mChannelMode = if (ChannelMode == AudioFormat.CHANNEL_IN_MONO) AudioFormat.CHANNEL_OUT_MONO else AudioFormat.CHANNEL_OUT_STEREO
-        myAudioTrack = MyAudioTrack(SampleRate, mChannelMode,
-                EncodeFormat, AudioManager.STREAM_MUSIC)
-        myAudioTrack.init()
+        audioTrack = AudioTrack(
+            SampleRate, mChannelMode,
+            EncodeFormat, AudioManager.STREAM_MUSIC
+        )
+        audioTrack.init()
         aacDecoder = AACDecoder(ChannelCount, ByteRate, SampleRate)
         aacDecoder.setOnDecodeDone(this)
         aacDecoder.init()
@@ -56,7 +58,7 @@ class VoicePlayThread(var inputdata: DataPackList) : Thread(TAG), OnDecodeDone {
 
     private fun dirtory() {
         aacDecoder.stop()
-        myAudioTrack.release()
+        audioTrack.release()
         Log.i(TAG, "退出成功")
     }
 
@@ -66,7 +68,7 @@ class VoicePlayThread(var inputdata: DataPackList) : Thread(TAG), OnDecodeDone {
     }
 
     override fun onDecodeData(bytes: ByteArray?, offset: Int, len: Int) {
-        myAudioTrack.playAudioTrack(bytes, offset, len)
+        audioTrack.playAudioTrack(bytes, offset, len)
     }
 
     override fun onClose() {}

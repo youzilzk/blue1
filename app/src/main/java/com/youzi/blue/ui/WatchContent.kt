@@ -20,7 +20,7 @@ import java.util.*
 import kotlin.concurrent.thread
 
 
-class WatchContect : AppCompatActivity(), SurfaceHolder.Callback {
+class WatchContent : AppCompatActivity(), SurfaceHolder.Callback {
     private lateinit var mSurfaceView: SurfaceView
     lateinit var mSurfaceHolder: SurfaceHolder
     var mdiaPlayThread: VideoPlayThread? = null

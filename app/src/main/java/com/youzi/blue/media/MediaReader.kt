@@ -9,11 +9,8 @@ import com.youzi.blue.utils.LoggerFactory
 /**
  * Created by Lesa on 2018/12/03.
  */
-class MediaReader(//方向宽度
-    protected var mWidth: Int, //方向高度
-    protected var mHeight: Int, protected var videoBitrate: Int, protected var videoFrameRate: Int,
-    encoderListener: EncoderListener?, private val mMediaProjection: MediaProjection
-) : Encoder(mWidth, mHeight, videoBitrate, videoFrameRate, encoderListener) {
+ class MediaReader(private var mWidth: Int, protected var mHeight: Int, videoBitrate: Int, videoFrameRate: Int, encoderListener: EncoderListener?, private val projection: MediaProjection)
+    : Encoder(mWidth, mHeight, videoBitrate, videoFrameRate, encoderListener) {
     private val log = LoggerFactory.getLogger()
 
     // parameters for the encoder
@@ -29,7 +26,7 @@ class MediaReader(//方向宽度
 
     private fun initVirtualDisplay() {
         mSurface = super.getmSurface()
-        mVirtualDisplay = mMediaProjection.createVirtualDisplay(
+        mVirtualDisplay = projection.createVirtualDisplay(
             "blue-display",
             mWidth, mHeight, mDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC,
             mSurface, null, null
@@ -42,6 +39,4 @@ class MediaReader(//方向宽度
         mVirtualDisplay?.release()
         mSurface?.release()
     }
-
-
 }

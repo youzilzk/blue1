@@ -6,9 +6,6 @@ import android.media.MediaFormat
 import android.view.Surface
 import com.youzi.blue.utils.LoggerFactory
 
-/**
- * Created by Lesa on 2018/12/03.
- */
 open class Encoder(
     private val videoW: Int, private val videoH: Int, private val videoBitrate: Int,
     private val videoFrameRate: Int, private var encoderListener: EncoderListener?
