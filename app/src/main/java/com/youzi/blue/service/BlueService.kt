@@ -298,9 +298,8 @@ class BlueService : AccessibilityService(), LifecycleOwner {
                 .setContentText("Starting monitoring service")
                 .setTicker("Ticker")
                 .setContentIntent(pendingIntent)
-            val notification = notificationBuilder.build()
 
-            return notification
+            return notificationBuilder.build()
         }
         return null
     }
@@ -324,6 +323,11 @@ class BlueService : AccessibilityService(), LifecycleOwner {
     }
 
     override fun getLifecycle(): Lifecycle = LifecycleRegistry(this)
+    @Deprecated("Deprecated in Java", ReplaceWith(
+        "super.onStart(intent, startId)",
+        "android.accessibility-service.AccessibilityService"
+    )
+    )
     override fun onStart(intent: Intent?, startId: Int) {
         super.onStart(intent, startId)
     }
