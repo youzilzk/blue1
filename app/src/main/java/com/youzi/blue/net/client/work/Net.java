@@ -1,7 +1,7 @@
 package com.youzi.blue.net.client.work;
 
 import com.youzi.blue.net.client.handlers.ClientChannelHandler;
-import com.youzi.blue.net.client.handlers.IdleCheckHandler;
+import com.youzi.blue.net.client.handlers.HeartCheckHandler;
 import com.youzi.blue.net.common.protocol.Message;
 import com.youzi.blue.net.common.protocol.MessageDecoder;
 import com.youzi.blue.net.common.protocol.MessageEncoder;
@@ -54,7 +54,7 @@ public class Net {
 
                         ch.pipeline().addLast(new MessageDecoder());
                         ch.pipeline().addLast(new MessageEncoder());
-                        ch.pipeline().addLast(new IdleCheckHandler());
+                        ch.pipeline().addLast(new HeartCheckHandler());
                         ch.pipeline().addLast(new ClientChannelHandler());
 
                     }
