@@ -4,12 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 
 import com.youzi.blue.utils.LoggerFactory;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -90,9 +93,24 @@ public class NetworkListener extends BroadcastReceiver {
         }
     }
 
-    public void unRegister() {
-        mContext.unregisterReceiver(this);
+    public boolean isBroadcastRegister() {
+        Intent intent = new Intent(mContext, NetworkListener.class);
+        PackageManager pm = mContext.getPackageManager();
+        List<ResolveInfo> resolveInfos = pm.queryBroadcastReceivers(intent, 0);
+        return resolveInfos != null && !resolveInfos.isEmpty();
     }
+
+    public void unRegister() {
+        try {
+            if (isBroadcastRegister()) {
+                mContext.unregisterReceiver(this);
+            }
+        } catch (Exception e) {
+            //亮屏再息屏会出现异常,因为亮屏未注册
+            log.error("注销网络监听广播异常: {}", e.getMessage());
+        }
+    }
+
 }
 
 

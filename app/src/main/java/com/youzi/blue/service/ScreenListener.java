@@ -4,8 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 
 import com.youzi.blue.utils.LoggerFactory;
+
+import java.util.List;
 
 public class ScreenListener {
     private final LoggerFactory log = LoggerFactory.getLogger();
@@ -32,11 +36,22 @@ public class ScreenListener {
     }
 
     public void unregister() {
-        if (receiver != null) {
-            mContext.unregisterReceiver(receiver);
+        try {
+            if (isBroadcastRegister()) {
+                mContext.unregisterReceiver(receiver);
+            }
+        } catch (Exception e) {
+            //亮屏再息屏会出现异常,因为亮屏未注册
+            log.error("注销屏幕监听广播异常: {}", e.getMessage());
         }
     }
 
+    public boolean isBroadcastRegister() {
+        Intent intent = new Intent(mContext, ScreenBroadcastReceiver.class);
+        PackageManager pm = mContext.getPackageManager();
+        List<ResolveInfo> resolveInfos = pm.queryBroadcastReceivers(intent, 0);
+        return resolveInfos != null && !resolveInfos.isEmpty();
+    }
 
     private class ScreenBroadcastReceiver extends BroadcastReceiver {
 

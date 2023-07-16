@@ -48,7 +48,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
     }
 
     private void handleHeartbeatMessage(ChannelHandlerContext ctx, Message message) {
-        log.info("心跳回复[{}]", ctx.channel().id());
+        log.info("心跳回复<<<<<<[{}]", ctx.channel().id());
     }
 
     private void handleStartRecordMessage(ChannelHandlerContext ctx, Message message) {

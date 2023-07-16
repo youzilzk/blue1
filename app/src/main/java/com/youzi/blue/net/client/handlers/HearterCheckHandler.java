@@ -32,7 +32,7 @@ public class HearterCheckHandler extends IdleStateHandler {
         Channel channel = ctx.channel();
 
         if (IdleState.WRITER_IDLE == evt.state()) {
-            log.info("心跳发送[{}]", channel.id());
+            log.info("心跳发送>>>>>>[{}]", channel.id());
             ctx.channel().writeAndFlush(heartBeatMessage);
         }
     }

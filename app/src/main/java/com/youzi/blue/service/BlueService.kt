@@ -43,6 +43,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
     var clientChannel: Channel? = null
 
     private var floatRootView: View? = null//悬浮窗View
+    private val mLifecycleRegistry = LifecycleRegistry(this)
 
     /************************/
     companion object {
@@ -83,6 +84,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
         instace = this
 
         super.onCreate()
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
 
         username = getSharedPreferences("user", MODE_PRIVATE).getString("username", null) as String
         //联网
@@ -320,23 +322,24 @@ class BlueService : AccessibilityService(), LifecycleOwner {
     override fun onServiceConnected() {
         super.onServiceConnected()
         showWindow()
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
     }
 
-    override fun getLifecycle(): Lifecycle = LifecycleRegistry(this)
-    @Deprecated("Deprecated in Java", ReplaceWith(
-        "super.onStart(intent, startId)",
-        "android.accessibility-service.AccessibilityService"
-    )
-    )
+    override fun getLifecycle(): Lifecycle = mLifecycleRegistry
+
     override fun onStart(intent: Intent?, startId: Int) {
         super.onStart(intent, startId)
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
+
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
         return super.onUnbind(intent)
     }
 
     override fun onDestroy() {
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         screenListener.unregister()
         super.onDestroy()
     }
