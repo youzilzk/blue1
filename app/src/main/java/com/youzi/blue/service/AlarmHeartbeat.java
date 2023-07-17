@@ -12,7 +12,7 @@ public class AlarmHeartbeat extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        log.warn("时钟消息, 检测网络是否正常!");
+        log.warn("时钟消息, 将检测网络!");
         BlueService.instace.checkNetwork();
     }
 }

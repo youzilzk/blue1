@@ -14,7 +14,7 @@ import com.youzi.blue.utils.LoggerFactory
  * @param width 视频宽度 1080
  * @param height 视频高度 1920
  * @param videoBitrate 视频 比特率  16777216
- * @param videoFrameRate 视频 帧率 24
+ * @param videoFrameRate 视频 帧率 15
  */
 class VideoRecorder(
     var sendServerThread: SendServerThread, mp: MediaProjection,

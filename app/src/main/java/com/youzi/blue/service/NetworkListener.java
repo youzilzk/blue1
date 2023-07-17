@@ -90,6 +90,7 @@ public class NetworkListener extends BroadcastReceiver {
             filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
             //注册广播接收
             mContext.registerReceiver(this, filter);
+            log.info("注册网络监听!");
         }
     }
 
@@ -104,6 +105,7 @@ public class NetworkListener extends BroadcastReceiver {
         try {
             if (isBroadcastRegister()) {
                 mContext.unregisterReceiver(this);
+                log.info("注销网络监听!");
             }
         } catch (Exception e) {
             //亮屏再息屏会出现异常,因为亮屏未注册

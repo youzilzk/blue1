@@ -12,7 +12,7 @@ class Decoder(width: Int, height: Int, fps: Int, surface: Surface) {
     private val mSurface: Surface
     private var VIDEO_WIDTH = 1440
     private var VIDEO_HEIGHT = 2560
-    private var TIME_INTERNAL = 24 //视频帧率
+    private var TIME_INTERNAL = 15 //视频帧率
 
     /**
      * @throws Exception 初始化编码器失败

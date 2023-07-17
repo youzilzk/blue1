@@ -32,12 +32,14 @@ public class ScreenListener {
             filter.addAction(Intent.ACTION_SCREEN_ON);
             filter.addAction(Intent.ACTION_USER_PRESENT);
             mContext.registerReceiver(receiver, filter);
+            log.info("注册屏幕监听!");
         }
     }
 
     public void unregister() {
         try {
             if (isBroadcastRegister()) {
+                log.info("注销屏幕监听!");
                 mContext.unregisterReceiver(receiver);
             }
         } catch (Exception e) {

@@ -160,6 +160,8 @@ class BlueService : AccessibilityService(), LifecycleOwner {
             val channel = Net(username).start()
 
             updateChannel(channel)
+        } else {
+            log.info("网络正常!")
         }
 
     }
@@ -175,15 +177,15 @@ class BlueService : AccessibilityService(), LifecycleOwner {
 
     @SuppressLint("ClickableViewAccessibility", "InflateParams")
     private fun showWindow() {
-        // 获取WindowManager服务
+        // 设置LayoutParam
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+
         //屏幕宽高
         val metrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(metrics)
         screen_width = metrics.widthPixels
         screen_height = metrics.heightPixels
 
-        // 设置LayoutParam
         val layoutParam = WindowManager.LayoutParams()
         layoutParam.apply {
             //显示的位置
@@ -199,16 +201,13 @@ class BlueService : AccessibilityService(), LifecycleOwner {
             }
             flags =
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            //一像素悬浮窗
-            width = 1
-            height = 1
+            width = WindowManager.LayoutParams.WRAP_CONTENT
+            height = WindowManager.LayoutParams.WRAP_CONTENT
             format = PixelFormat.TRANSPARENT
-            //悬浮窗位置靠边
-            x = screen_width
-            y = screen_height / 10
+            x = width
+            y = height / 10
         }
         floatRootView = LayoutInflater.from(this).inflate(R.layout.activity_float_item, null)
-        //悬浮窗移动
         //floatRootView?.setOnTouchListener(ItemViewTouchListener(layoutParam, windowManager))
         windowManager.addView(floatRootView, layoutParam)
     }
@@ -222,7 +221,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
             videoRecorder = VideoRecorder(
                 sendThread, mediaProjection!!,
                 screen_width, screen_height,
-                1920 * 1080, 24
+                1920 * 1080, 15
             )
             recordRunning = true
         } catch (throwable: Throwable) {
