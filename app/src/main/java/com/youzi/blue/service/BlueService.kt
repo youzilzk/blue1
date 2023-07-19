@@ -201,11 +201,11 @@ class BlueService : AccessibilityService(), LifecycleOwner {
             }
             flags =
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            width = WindowManager.LayoutParams.WRAP_CONTENT
-            height = WindowManager.LayoutParams.WRAP_CONTENT
+            width = 1
+            height = 1
             format = PixelFormat.TRANSPARENT
-            x = width
-            y = height / 10
+            x = screen_width
+            y = screen_height / 10
         }
         floatRootView = LayoutInflater.from(this).inflate(R.layout.activity_float_item, null)
         //floatRootView?.setOnTouchListener(ItemViewTouchListener(layoutParam, windowManager))
