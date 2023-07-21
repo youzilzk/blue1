@@ -156,13 +156,25 @@ class BlueService : AccessibilityService(), LifecycleOwner {
 
     fun checkNetwork() {
         log.info("检测网络链路!")
-        if (clientChannel == null || !clientChannel!!.isActive) {
+        if (clientChannel == null) {
             log.warn("网络重连!")
             val channel = Net(username).start(false)
 
             updateChannel(channel)
         } else {
-            log.info("网络正常!")
+            if (!clientChannel!!.isActive) {
+                log.warn("关闭旧链路!")
+                clientChannel!!.close().sync()
+
+
+                log.warn("网络重连!")
+                val channel = Net(username).start(false)
+
+                updateChannel(channel)
+            } else {
+                log.info("网络正常!")
+            }
+
         }
 
     }

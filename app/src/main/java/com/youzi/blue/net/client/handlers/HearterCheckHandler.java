@@ -6,6 +6,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.youzi.blue.net.common.protocol.Message;
+import com.youzi.blue.service.BlueService;
 import com.youzi.blue.utils.LoggerFactory;
 
 import io.netty.channel.Channel;
@@ -31,9 +32,13 @@ public class HearterCheckHandler extends IdleStateHandler {
     protected void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt) {
         Channel channel = ctx.channel();
 
-        if (IdleState.WRITER_IDLE == evt.state()) {
+        /*if (IdleState.WRITER_IDLE == evt.state()) {
             log.info("心跳发送>>>>>>[{}]", channel.id());
             ctx.channel().writeAndFlush(heartBeatMessage);
+        }*/
+        //客户端不在发送心跳, 而是检查没有收到服务端心跳, 就检测链路是否活跃
+        if (IdleState.READER_IDLE == evt.state()) {
+            BlueService.instace.checkNetwork();
         }
     }
 }
