@@ -69,8 +69,8 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/allocation" />
         </service>
-        <!-- 时钟心跳接收者-->
-        <receiver android:name=".service.AlarmHeartbeat" />
+        <!-- 时钟心跳接收者, 为了省电, 取消时钟检查网络-->
+        <!--<receiver android:name=".service.AlarmHeartbeat" />-->
         <!--监听网络变化-->
         <receiver android:name=".service.NetworkListener">
             <intent-filter>

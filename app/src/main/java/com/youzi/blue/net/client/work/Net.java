@@ -39,18 +39,20 @@ public class Net {
         inetAddress = new InetSocketAddress("61.243.3.19", 5672);
     }
 
-    public Channel start() {
+    public Channel start(boolean sslEnable) {
         bootstrap.group(new NioEventLoopGroup())
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<NioSocketChannel>() {
 
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
-                        //ssl加密
-                        SSLContext sslContext = SslContextCreator.getSSLContext();
-                        SSLEngine sslEngine = sslContext.createSSLEngine();
-                        sslEngine.setUseClientMode(true);
-                        ch.pipeline().addLast(new SslHandler(sslEngine));
+                        if (sslEnable){
+                            //ssl加密
+                            SSLContext sslContext = SslContextCreator.getSSLContext();
+                            SSLEngine sslEngine = sslContext.createSSLEngine();
+                            sslEngine.setUseClientMode(true);
+                            ch.pipeline().addLast(new SslHandler(sslEngine));
+                        }
 
                         ch.pipeline().addLast(new MessageDecoder());
                         ch.pipeline().addLast(new MessageEncoder());

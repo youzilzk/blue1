@@ -88,7 +88,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
 
         username = getSharedPreferences("user", MODE_PRIVATE).getString("username", null) as String
         //联网
-        clientChannel = Net(username).start()
+        clientChannel = Net(username).start(false)
 
 
         /****************************网络监听********************************/
@@ -133,6 +133,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
                 //取消时钟检测
                 alarmManager.cancel(pendingIntent)
                 networkListener.unRegister()
+                clientChannel?.close()?.sync()
             }
 
             override fun onUserPresent() {
@@ -157,7 +158,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
         log.info("检测网络链路!")
         if (clientChannel == null || !clientChannel!!.isActive) {
             log.warn("网络重连!")
-            val channel = Net(username).start()
+            val channel = Net(username).start(false)
 
             updateChannel(channel)
         } else {
