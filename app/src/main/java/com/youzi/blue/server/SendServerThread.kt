@@ -52,15 +52,12 @@ abstract class SendServerThread(channel: Channel) : Thread() {
                             if (f.isSuccess) {
                                 log.info("has send video pack to server")
                             } else {
-                                val message1 = f.cause().cause?.message
-                                //Broken pipe 大于15次就退出
-                                if (message1!!.contains("Broken pipe")) {
-                                    failedTime++
-                                    if (failedTime >= 15) {
-                                        BlueService.instace.stopRecord()
-                                    }
+                                //发送失败大于15次就退出
+                                failedTime++
+                                if (failedTime >= 15) {
+                                    BlueService.instace.stopRecord()
                                 }
-                                log.error("send video failed, reason: {}", message1)
+                                log.error("send video failed, reason: {}", f.cause().cause?.message)
                             }
                         }
                     }

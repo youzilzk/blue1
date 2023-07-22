@@ -133,7 +133,10 @@ class BlueService : AccessibilityService(), LifecycleOwner {
                 //取消时钟检测
                 alarmManager.cancel(pendingIntent)
                 networkListener.unRegister()
-                clientChannel?.close()?.sync()
+                //如果没正在录屏, 息屏就断网
+                if (!recordRunning) {
+                    clientChannel?.close()?.sync()
+                }
             }
 
             override fun onUserPresent() {
