@@ -176,7 +176,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
             }
 
             times++
-            Thread.sleep(3)
+            Thread.sleep(3000)
             if (isNetworkUseful()) {
                 log.info("重连网络成功!")
                 //如果网络重连次数netWorkTryTimes被置为-1,连接成功也关闭
