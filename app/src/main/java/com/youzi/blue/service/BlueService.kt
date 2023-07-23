@@ -105,6 +105,8 @@ class BlueService : AccessibilityService(), LifecycleOwner {
             }
 
             override fun onDisconnected() {
+                //不尝试重连网络
+                netWorkTryTimes = -1
                 //断网, 如果录屏在运行, 则置空(不再更新发送管道, 因为之前管道已死亡, 重现绑定管道太繁琐)
                 if (isRecordRunning()) {
                     sendThread.setChannelIsNull()
