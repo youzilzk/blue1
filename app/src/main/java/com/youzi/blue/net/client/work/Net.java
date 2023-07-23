@@ -26,7 +26,7 @@ import io.netty.handler.ssl.SslHandler;
  * 客户端启动器
  */
 public class Net {
-    private static final LoggerFactory log = LoggerFactory.getLogger();
+    private final LoggerFactory log = LoggerFactory.getLogger();
     private final Bootstrap bootstrap;
     InetSocketAddress inetAddress;
 

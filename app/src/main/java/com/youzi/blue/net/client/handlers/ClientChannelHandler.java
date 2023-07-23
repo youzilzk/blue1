@@ -13,7 +13,7 @@ import io.netty.channel.*;
  * 客户端和服务端连接处理
  */
 public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
-    private static final LoggerFactory log = LoggerFactory.getLogger();
+    private final LoggerFactory log = LoggerFactory.getLogger();
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Message message) {

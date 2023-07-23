@@ -17,7 +17,7 @@ import java.util.Objects;
 
 
 public class NetworkListener extends BroadcastReceiver {
-    private static LoggerFactory log = LoggerFactory.getLogger();
+    private LoggerFactory log = LoggerFactory.getLogger();
 
     private Context mContext;
     private NetChangeListener listener;
