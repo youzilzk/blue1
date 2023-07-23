@@ -50,6 +50,8 @@ class BlueService : AccessibilityService(), LifecycleOwner {
         @SuppressLint("StaticFieldLeak")
         lateinit var instace: BlueService
 
+        var netWorkTryTimes: Int = -1
+
         //无障碍服务运行状态
         var isAccessibilityRunning = MutableLiveData<Boolean>()
     }
@@ -130,6 +132,9 @@ class BlueService : AccessibilityService(), LifecycleOwner {
 
             override fun onScreenOff() {
                 //黑屏
+                //不尝试重连网络
+                netWorkTryTimes = -1
+
                 //取消时钟检测
                 alarmManager.cancel(pendingIntent)
                 networkListener.unRegister()
@@ -157,37 +162,46 @@ class BlueService : AccessibilityService(), LifecycleOwner {
 
     }
 
-    fun checkNetwork() {
-        log.info("检测网络链路!")
-        if (clientChannel == null) {
-            log.warn("网络重连!")
-            val channel = Net(username).start(false)
+    fun tryReConnected() {
+        var times = 1
+        netWorkTryTimes = 20
 
-            updateChannel(channel)
-        } else {
-            if (!clientChannel!!.isActive) {
-                log.warn("关闭旧链路!")
-                clientChannel!!.close().sync()
+        while (times <= netWorkTryTimes) {
+            log.info("尝试网络重连,第[{}]次!", times)
 
-
-                log.warn("网络重连!")
-                val channel = Net(username).start(false)
-
-                updateChannel(channel)
-            } else {
-                log.info("网络正常!")
+            clientChannel = Net(username).start(false)
+            //网络变化, 如果录屏在运行, 则置空(不再更新发送管道, 因为之前管道已死亡, 重现绑定管道太繁琐)
+            if (isRecordRunning()) {
+                sendThread.setChannelIsNull()
             }
 
+            times++
+            Thread.sleep(3)
+            if (isNetworkUseful()) {
+                log.info("重连网络成功!")
+                //如果网络重连次数netWorkTryTimes被置为-1,连接成功也关闭
+                if (netWorkTryTimes == -1) {
+                    log.info("网络重连次数被置为-1,断开网络!")
+                    clientChannel?.close()?.sync()
+                }
+                break
+            }
+        }
+    }
+
+    fun checkNetwork() {
+        log.info("检测网络链路!")
+        if (isNetworkUseful()) {
+            log.info("网络正常!")
+        } else {
+            log.warn("网络异常!")
+            tryReConnected()
         }
 
     }
 
-    fun updateChannel(channel: Channel?) {
-        clientChannel = channel
-        //网络变化, 如果录屏在运行, 则置空(不再更新发送管道, 因为之前管道已死亡, 重现绑定管道太繁琐)
-        if (isRecordRunning()) {
-            sendThread.setChannelIsNull()
-        }
+    private fun isNetworkUseful(): Boolean {
+        return !(clientChannel == null || !clientChannel!!.isActive)
     }
 
 

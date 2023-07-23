@@ -77,7 +77,8 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
         Channel channel = ctx.channel();
         channel.close().sync();
         super.exceptionCaught(ctx, cause);
-        log.info("链路关闭[channelId={}], message: {}", channel.id(), cause.getMessage());
+        log.info("链路异常关闭[channelId={}], message: {}", channel.id(), cause.getMessage());
+        BlueService.instace.tryReConnected();
     }
 
 }
