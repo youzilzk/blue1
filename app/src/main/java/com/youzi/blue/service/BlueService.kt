@@ -142,6 +142,12 @@ class BlueService : AccessibilityService(), LifecycleOwner {
                 networkListener.unRegister()
                 //如果没正在录屏, 息屏就断网
                 if (!recordRunning) {
+                    clientChannel?.writeAndFlush(
+                        Message(
+                            Message.TYPE.CLOSECHANNEL,
+                            Constants.STATE.REQUEST.value
+                        )
+                    )
                     clientChannel?.close()?.sync()
                 }
             }

@@ -23,7 +23,9 @@ public class Message {
 
         STOPRECORD(6),
 
-        LINKCHECK(7);
+        LINKCHECK(7),
+
+        CLOSECHANNEL(8);
 
         public final byte value;
 
