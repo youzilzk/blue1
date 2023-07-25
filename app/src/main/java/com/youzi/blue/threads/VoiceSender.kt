@@ -5,7 +5,7 @@ import android.util.Log
 import com.youzi.blue.media.AACEncoder
 import com.youzi.blue.io.VoicePack
 import com.youzi.blue.media.AudioRecord
-import com.youzi.blue.server.SendServerThread
+import com.youzi.blue.io.SendServerThread
 
 /**
  *

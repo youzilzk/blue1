@@ -1,9 +1,9 @@
-package com.youzi.blue.net.client.manager;
+package com.youzi.blue.network.client.manager;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.youzi.blue.server.DataPackList;
+import com.youzi.blue.io.DataPackList;
 
 public class Manager {
 

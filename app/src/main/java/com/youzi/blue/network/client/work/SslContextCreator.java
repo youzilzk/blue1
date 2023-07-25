@@ -1,4 +1,4 @@
-package com.youzi.blue.net.client.work;
+package com.youzi.blue.network.client.work;
 
 import com.youzi.blue.utils.LoggerFactory;
 

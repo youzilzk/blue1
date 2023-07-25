@@ -1,14 +1,6 @@
-package com.youzi.blue.net.common.protocol;
-
-import io.netty.channel.Channel;
-import io.netty.util.AttributeKey;
+package com.youzi.blue.network.common.protocol;
 
 public class Constants {
-
-    /**
-     * 对接的Channel
-     */
-    public static AttributeKey<Channel> TOWARD_CHANNEL = AttributeKey.newInstance("toward_channel");
 
     public enum STATE {
         SUCCESS("200"),

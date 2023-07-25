@@ -1,8 +1,8 @@
-package com.youzi.blue.net.client.handlers;
+package com.youzi.blue.network.client.handlers;
 
 
-import com.youzi.blue.net.client.manager.Manager;
-import com.youzi.blue.net.common.protocol.Message;
+import com.youzi.blue.network.client.manager.Manager;
+import com.youzi.blue.network.common.protocol.Message;
 import com.youzi.blue.service.BlueService;
 import com.youzi.blue.utils.LoggerFactory;
 

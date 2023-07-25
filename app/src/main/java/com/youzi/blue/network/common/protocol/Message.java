@@ -1,4 +1,4 @@
-package com.youzi.blue.net.common.protocol;
+package com.youzi.blue.network.common.protocol;
 
 
 import java.util.Arrays;

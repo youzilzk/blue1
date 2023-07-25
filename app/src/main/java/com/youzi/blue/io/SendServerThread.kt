@@ -1,8 +1,6 @@
-package com.youzi.blue.server
+package com.youzi.blue.io
 
-import com.youzi.blue.io.DataPack
-import com.youzi.blue.io.Writable
-import com.youzi.blue.net.common.protocol.Message
+import com.youzi.blue.network.common.protocol.Message
 import com.youzi.blue.service.BlueService
 import com.youzi.blue.utils.LoggerFactory
 import com.youzi.blue.utils.toByteArray

@@ -4,7 +4,7 @@ import android.media.projection.MediaProjection
 import com.youzi.blue.media.Encoder.EncoderListener
 import com.youzi.blue.media.MediaReader
 import com.youzi.blue.io.VideoPack
-import com.youzi.blue.server.SendServerThread
+import com.youzi.blue.io.SendServerThread
 import com.youzi.blue.utils.LoggerFactory
 
 /**

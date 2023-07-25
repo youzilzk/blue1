@@ -1,10 +1,5 @@
-package com.youzi.blue.server
+package com.youzi.blue.io
 
-import com.youzi.blue.io.*
-import com.youzi.blue.io.DataInputStreamBuffer
-import com.youzi.blue.io.VideoPack
-import com.youzi.blue.io.VoicePack
-import com.youzi.blue.io.Writable
 import java.util.concurrent.LinkedBlockingQueue
 
 

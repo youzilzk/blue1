@@ -24,10 +24,10 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.MutableLiveData
 import com.youzi.blue.R
-import com.youzi.blue.net.client.work.Net
-import com.youzi.blue.net.common.protocol.Constants
-import com.youzi.blue.net.common.protocol.Message
-import com.youzi.blue.server.SendServerThread
+import com.youzi.blue.network.client.work.Net
+import com.youzi.blue.network.common.protocol.Constants
+import com.youzi.blue.network.common.protocol.Message
+import com.youzi.blue.io.SendServerThread
 import com.youzi.blue.service.ScreenListener.ScreenStateListener
 import com.youzi.blue.threads.VideoRecorder
 import com.youzi.blue.utils.LoggerFactory

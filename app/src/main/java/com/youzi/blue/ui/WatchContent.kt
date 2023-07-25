@@ -11,9 +11,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.youzi.blue.MainActivity
 import com.youzi.blue.R
-import com.youzi.blue.net.client.manager.Manager
-import com.youzi.blue.net.common.protocol.Constants
-import com.youzi.blue.net.common.protocol.Message
+import com.youzi.blue.network.client.manager.Manager
+import com.youzi.blue.network.common.protocol.Constants
+import com.youzi.blue.network.common.protocol.Message
 import com.youzi.blue.service.BlueService
 import com.youzi.blue.threads.VideoPlayThread
 import java.util.*

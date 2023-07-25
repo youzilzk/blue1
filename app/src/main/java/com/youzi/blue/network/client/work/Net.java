@@ -1,9 +1,9 @@
-package com.youzi.blue.net.client.work;
+package com.youzi.blue.network.client.work;
 
-import com.youzi.blue.net.client.handlers.ClientChannelHandler;
-import com.youzi.blue.net.common.protocol.Message;
-import com.youzi.blue.net.common.protocol.MessageDecoder;
-import com.youzi.blue.net.common.protocol.MessageEncoder;
+import com.youzi.blue.network.client.handlers.ClientChannelHandler;
+import com.youzi.blue.network.common.protocol.Message;
+import com.youzi.blue.network.common.protocol.MessageDecoder;
+import com.youzi.blue.network.common.protocol.MessageEncoder;
 import com.youzi.blue.utils.LoggerFactory;
 
 import org.jetbrains.annotations.NotNull;

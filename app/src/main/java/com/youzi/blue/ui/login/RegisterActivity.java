@@ -15,8 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSONObject;
 import com.youzi.blue.R;
-import com.youzi.blue.net.client.entity.User;
-import com.youzi.blue.net.common.FormData;
+import com.youzi.blue.network.client.entity.User;
+import com.youzi.blue.network.common.FormData;
 import com.youzi.blue.utils.OkHttp;
 
 import java.io.IOException;

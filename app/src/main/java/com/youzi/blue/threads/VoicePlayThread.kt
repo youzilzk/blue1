@@ -7,7 +7,7 @@ import com.youzi.blue.io.VoicePack
 import com.youzi.blue.media.AACDecoder
 import com.youzi.blue.media.AACDecoder.OnDecodeDone
 import com.youzi.blue.media.AudioTrack
-import com.youzi.blue.server.DataPackList
+import com.youzi.blue.io.DataPackList
 
 class VoicePlayThread(var inputdata: DataPackList) : Thread(TAG), OnDecodeDone {
 

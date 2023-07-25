@@ -3,7 +3,7 @@ package com.youzi.blue.threads
 import android.util.Log
 import android.view.Surface
 import com.youzi.blue.media.Decoder
-import com.youzi.blue.server.DataPackList
+import com.youzi.blue.io.DataPackList
 import com.youzi.blue.io.VideoPack
 
 class VideoPlayThread(var surface: Surface, var inputdata: DataPackList) : Thread(TAG) {

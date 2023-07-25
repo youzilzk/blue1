@@ -1,4 +1,4 @@
-package com.youzi.blue.net.common.utils;
+package com.youzi.blue.network.common.utils;
 
 
 import android.annotation.SuppressLint;

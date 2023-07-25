@@ -1,4 +1,4 @@
-package com.youzi.blue.net.client.entity;
+package com.youzi.blue.network.client.entity;
 
 
 

@@ -1,4 +1,4 @@
-package com.youzi.blue.net.common;
+package com.youzi.blue.network.common;
 
 import java.lang.reflect.Field;
 
