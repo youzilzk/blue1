@@ -29,7 +29,8 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        //隐藏自带的标题栏,自己画一个, 为了在标题栏上带"+"号,设置页也需要自己画,因为共用了一个activity
+        this.getSupportActionBar()?.hide();
         Manager.initContext(applicationContext)
 
         setContentView(R.layout.activity_main)
