@@ -4,6 +4,10 @@
     <color name="colorPrimary">#5367EA</color>
     <color name="colorAccent">#FF4081</color>
     <color name="black">#FF000000</color>
+    <color name="buttonBackGround">#74C7CF</color>
+    <color name="addBackGround">#A0F5FD</color>
     <color name="white">#FFFFFF</color>
+    <color name="mainTextColor">#000000</color>
+    <color name="descTextColor">#9497A3</color>
 
 </resources>
