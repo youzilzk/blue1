@@ -76,10 +76,14 @@ class HomeFragment : Fragment(), View.OnClickListener {
     }
 
 
+    override fun onResume() {
+        super.onResume()
+        refreshData()
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         showListView()
-        refreshData()
         //右上角添加设备按钮
         addDevice.setOnClickListener(this)
     }

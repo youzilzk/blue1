@@ -14,7 +14,7 @@ import com.youzi.blue.service.BlueService
 import java.util.*
 
 
-object Utils {
+object Help {
 
     fun hasBasePermission(context: Activity): Boolean {
         return hasWriteAndRecordPermission(context)

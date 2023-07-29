@@ -16,7 +16,7 @@ import com.youzi.blue.R
 import com.youzi.blue.service.BlueService
 import com.youzi.blue.ui.login.LoginActivity
 import com.youzi.blue.utils.LoggerFactory
-import com.youzi.blue.utils.Utils
+import com.youzi.blue.utils.Help
 import kotlinx.android.synthetic.main.fragment_setting.*
 
 /**
@@ -74,7 +74,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
         bt_01.setOnClickListener(this)
         bt_03.setOnClickListener(this)
 
-        if (Utils.isAccessibilityRunning(activity!!)) {
+        if (Help.isAccessibilityRunning(activity!!)) {
             bt_01.isEnabled = false
         } else {
             bt_01.text = "启动基础服务"
@@ -85,7 +85,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v) {
             bt_01 -> {
-                if (!Utils.isAccessibilityRunning(activity!!)) {
+                if (!Help.isAccessibilityRunning(activity!!)) {
                     BlueService.isAccessibilityRunning.observe(activity!!) {
                         if (it) {
                             accessibilityService = BlueService.instace
@@ -113,11 +113,11 @@ class SettingFragment : Fragment(), View.OnClickListener {
 
 
     private fun startBaseService() {
-        if (!Utils.hasBasePermission(activity!!)) {
+        if (!Help.hasBasePermission(activity!!)) {
             Toast.makeText(context, "请先打开麦克风和存储权限！", Toast.LENGTH_SHORT).show()
             return
         }
-        Utils.checkAccessibilityPermission(activity!!)
+        Help.checkAccessibilityPermission(activity!!)
     }
 
 
@@ -157,7 +157,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
     /**********************************************************************/
     override fun onResume() {
         super.onResume()
-        if (Utils.isAccessibilityRunning(activity!!)) {
+        if (Help.isAccessibilityRunning(activity!!)) {
             if (BlueService.isAccessibilityRunning.value != true) {
                 BlueService.isAccessibilityRunning.postValue(true)
             }

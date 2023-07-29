@@ -16,7 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.alibaba.fastjson.JSONObject;
 import com.youzi.blue.MainActivity;
 import com.youzi.blue.R;
+import com.youzi.blue.service.BlueService;
+import com.youzi.blue.utils.Help;
 import com.youzi.blue.utils.OkHttp;
+import com.youzi.blue.utils.Utils;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -70,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
                 String etUsername = et_userName.getText().toString();
 
                 //正则化判断输入的账号是否符合手机号格式
-                if (!isTelPhoneNumber(etUsername)) {
+                if (!Utils.isTelPhoneNumber(etUsername)) {
                     Toast.makeText(LoginActivity.this, "请输入正确的手机号！", Toast.LENGTH_SHORT).show();
                 } else {
                     //登录
@@ -91,6 +94,19 @@ public class LoginActivity extends AppCompatActivity {
                                 showText = "登录成功!";
                                 //修改本地存储为已登录
                                 userPreferences.edit().putString("username", etUsername).apply();
+
+                                //退出登录并重新登录时, blue服务可能在运行, 就更新用户信息, 重新联网
+                                if (Help.INSTANCE.isAccessibilityRunning(LoginActivity.this)) {
+                                    BlueService blueService = BlueService.instace;
+                                    blueService.updateUser();
+                                    try {
+                                        blueService.getClientChannel().close().sync();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    blueService.tryReConnected();
+                                }
+
                                 //跳转到Mainactivity
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
@@ -119,14 +135,4 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    /*正则化验证手机号码*/
-    public static boolean isTelPhoneNumber(String mobile) {
-        if (mobile != null && mobile.length() == 11) {
-            Pattern pattern = Pattern.compile("^1[3|4|5|6|7|8|9][0-9]\\d{8}$");
-            Matcher matcher = pattern.matcher(mobile);
-            return matcher.matches();
-        } else {
-            return false;
-        }
-    }
 }

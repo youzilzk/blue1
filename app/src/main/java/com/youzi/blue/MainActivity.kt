@@ -15,10 +15,11 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.youzi.blue.network.client.manager.Manager
+import com.youzi.blue.service.BlueService
 import com.youzi.blue.ui.HomeFragment
 import com.youzi.blue.ui.SettingFragment
 import com.youzi.blue.ui.SignActivity
-import com.youzi.blue.utils.Utils
+import com.youzi.blue.utils.Help
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         initView()
 
         //权限检查
-        Utils.checkBasePermission(this)
+        Help.checkBasePermission(this)
         ignoreBatteryOptimization(this)
     }
 
