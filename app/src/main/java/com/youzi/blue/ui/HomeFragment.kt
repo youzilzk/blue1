@@ -9,6 +9,7 @@ import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.SimpleAdapter
 import android.widget.Toast
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
@@ -25,11 +26,9 @@ import java.io.IOException
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * 主页
  */
-class HomeFragment : Fragment()/*, View.OnClickListener*/ {
+class HomeFragment : Fragment(), View.OnClickListener {
     private val log = LoggerFactory.getLogger()
 
     //列表显示的数据
@@ -69,8 +68,7 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         val rootView = inflater.inflate(R.layout.fragment_home, container, false)
@@ -82,17 +80,28 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
         super.onActivityCreated(savedInstanceState)
         showListView()
         refreshData()
+        //右上角添加设备按钮
+        addDevice.setOnClickListener(this)
     }
 
+    override fun onClick(v: View?) {
+        when (v) {
+            addDevice -> {
+                val intent = Intent(
+                    context, AddDialog::class.java
+                )
+                startActivity(intent)
+            }
+        }
+    }
 
     fun refreshData() {
         data.clear()
         val username = context?.getSharedPreferences("user", AccessibilityService.MODE_PRIVATE)
             ?.getString("username", null)
         //登录
-        OkHttp.getInstance().httpGet(
-            "http://61.243.3.19:5000/user/device?username=$username",
-            object : Callback {
+        OkHttp.getInstance()
+            .httpGet("http://61.243.3.19:5000/user/device?username=$username", object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
                     log.info("refresh data error!")
                 }
@@ -110,16 +119,12 @@ class HomeFragment : Fragment()/*, View.OnClickListener*/ {
                             //一行记录，包含多个控件
                             item["deviceImage"] = R.drawable.head_ico
                             item["deviceName"] = i.get("username").toString()
-                            item["description"] =
-                                "俄国人为符合规范鹅嘎王菲和瑞特个人房屋我和如果文特人格奉化人提供服务和如果无法和各位"
+                            item["description"] = "俄国人为符合规范鹅嘎王菲和瑞特个人房屋我和如果文特人格奉化人提供服务和如果无法和各位"
 
                             val state = i["state"] as Int
-                            if (state == 1)
-                                item["state"] = R.drawable.state_green
-                            else if (state == 0)
-                                item["state"] = R.drawable.state_gray
-                            else
-                                item["state"] = R.drawable.state_yellow
+                            if (state == 1) item["state"] = R.drawable.state_green
+                            else if (state == 0) item["state"] = R.drawable.state_gray
+                            else item["state"] = R.drawable.state_yellow
 
                             data.add(item)
                         }

@@ -40,4 +40,5 @@
         android:background="@drawable/state_gray"
         android:contentDescription="设备在线状态,gray-离线,green-在线"
         android:gravity="center" />
+
 </LinearLayout>

@@ -25,23 +25,21 @@
             android:textSize="21sp" />
 
         <ImageButton
-            android:id="@+id/plus"
+            android:id="@+id/addDevice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="29dp"
+            android:layout_marginEnd="29dp"
             android:background="@color/colorPrimary"
-            android:onClick="buttonTopRight"
             android:src="@drawable/plus" />
     </RelativeLayout>
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="678dp"
+        android:layout_marginBottom="50dp"
         android:divider="@drawable/main_list_divider_line"
-        android:dividerHeight="1.5px"
-        android:layout_marginBottom="50dp">
-    </ListView>
+        android:dividerHeight="1.5px" />
 </LinearLayout>
