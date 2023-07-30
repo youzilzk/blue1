@@ -68,9 +68,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //获取输入的密码框内容
-                String etPassword = et_password.getText().toString();
+                String etPassword = et_password.getText().toString().trim();
                 //登录按钮获取要查询的账号
-                String etUsername = et_userName.getText().toString();
+                String etUsername = et_userName.getText().toString().trim();
 
                 //正则化判断输入的账号是否符合手机号格式
                 if (!Utils.isTelPhoneNumber(etUsername)) {

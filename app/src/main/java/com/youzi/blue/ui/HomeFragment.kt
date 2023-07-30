@@ -33,28 +33,25 @@ import java.io.IOException
 class HomeFragment : Fragment(), View.OnClickListener {
     private val log = LoggerFactory.getLogger()
 
+    private var username: String? = null
+
     //列表显示的数据
     private val data: ArrayList<HashMap<String, Any>> = ArrayList()
     private lateinit var simpleAdapter: SimpleAdapter
 
     companion object {
-        private val ARG_SHOW_TEXT = "text"
         private var mContentText: String? = null
         private var fragment: HomeFragment? = null
 
         /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @return A new instance of fragment BlankFragment.
+         * 新建主页的静态方法
          */
         fun newInstance(param: String?): HomeFragment {
             if (fragment == null) {
                 fragment = HomeFragment()
             }
             val args = Bundle()
-            args.putString(ARG_SHOW_TEXT, param)
+            args.putString("text", param)
             fragment!!.arguments = args
             return fragment as HomeFragment
         }
@@ -64,7 +61,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            mContentText = arguments!!.getString(ARG_SHOW_TEXT)
+            mContentText = arguments!!.getString("text")
         }
     }
 
@@ -83,6 +80,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        username = context?.getSharedPreferences("user", AccessibilityService.MODE_PRIVATE)
+            ?.getString("username", null)?.trim()
         showListView()
         //右上角添加设备按钮
         addDevice.setOnClickListener(this)
@@ -104,9 +103,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
     private fun refreshData() {
         data.clear()
-        val username = context?.getSharedPreferences("user", AccessibilityService.MODE_PRIVATE)
-            ?.getString("username", null)
-        //登录
+        //查询
         OkHttp.getInstance()
             .httpGet("http://61.243.3.19:5000/user/device?username=$username", object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
@@ -125,7 +122,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
                             val item: HashMap<String, Any> = HashMap()
                             //一行记录，包含多个控件
                             item["deviceImage"] = R.drawable.head_ico
-                            item["deviceName"] = i["username"].toString()
+                            item["watcherUser"] = i["username"].toString()
                             item["description"] = "俄国人为符合规范鹅嘎王菲和瑞特个人房屋我和如果文特人格奉化人提供服务和如果无法和各位"
 
                             val state = i["state"] as Int
@@ -167,7 +164,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
         //左划菜单事件
         listView.setOnMenuItemClickListener { i, _, menuItem ->
-            val item = data[i]
+            val watchUser = data[i]["watcherUser"]
             when (menuItem) {
                 0 -> {
                     val intent = Intent(context, EditDialog::class.java)
@@ -175,15 +172,40 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
                     //编辑的type为2
                     bundle.putInt("type", 2)
-                    bundle.putString("watchUser", item["deviceName"].toString())
+                    bundle.putString("watchUser", watchUser.toString())
 
                     intent.putExtras(bundle)
                     startActivity(intent)
                 }
                 1 -> {
-                    Toast.makeText(
-                        context, "delete " + item["deviceName"], Toast.LENGTH_SHORT
-                    ).show()
+                    OkHttp.getInstance()
+                        .httpGet(
+                            "http://61.243.3.19:5000/user/deleteWatchUser?username=$username&watchUser=$watchUser",
+                            object : Callback {
+                                override fun onFailure(call: Call, e: IOException) {
+                                    Toast.makeText(
+                                        context, "网络错误!", Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+
+                                @Throws(IOException::class)
+                                override fun onResponse(call: Call, response: Response) {
+                                    val jo = JSONObject.parseObject(String(response.body().bytes()))
+                                    val message = jo["message"]
+
+                                    activity?.runOnUiThread {
+                                        Toast.makeText(
+                                            context,
+                                            message.toString(),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
+                                    if ((jo["result"] as Boolean?)!!) {
+                                        refreshData()
+                                    }
+                                }
+                            })
                 }
             }
             false
@@ -198,7 +220,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
             context,
             data,
             R.layout.listview_items,
-            arrayOf("deviceImage", "deviceName", "description", "state"),
+            arrayOf("deviceImage", "watcherUser", "description", "state"),
             intArrayOf(R.id.device_image, R.id.device_name, R.id.description, R.id.state)
         )
         //foot设置优雅的分割线
@@ -218,14 +240,11 @@ class HomeFragment : Fragment(), View.OnClickListener {
             }
 
             val intent = Intent(activity, WatchContent::class.java)
-            val username = data[i]["deviceName"]
+            val username = data[i]["watcherUser"]
 
             intent.putExtra("username", username.toString())
             activity!!.finish()
             activity?.startActivity(intent)
-
-//            通知数据改变
-//            simpleAdapter.notifyDataSetChanged()
         }
     }
 
