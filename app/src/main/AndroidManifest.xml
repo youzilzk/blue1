@@ -54,7 +54,7 @@
         <activity
             android:name=".ui.WatchContent"
             android:exported="true" />
-        <activity android:name=".ui.AddDialog" android:theme="@style/AddDialogStyleTop" />
+        <activity android:name=".ui.EditDialog" android:theme="@style/AddDialogStyleTop" />
 
         <service
             android:name="com.youzi.blue.service.BlueService"

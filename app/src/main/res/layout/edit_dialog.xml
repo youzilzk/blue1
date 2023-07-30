@@ -17,13 +17,13 @@
             android:gravity="center">
 
             <TextView
-                android:id="@+id/addTitle"
+                android:id="@+id/upBoxTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="添加设备"
+                android:text="标题"
                 android:textColor="@color/mainTextColor"
-                android:textSize="18sp" />
+                android:textSize="20sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -104,15 +104,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:gravity="center">
+            android:gravity="center"
+            android:padding="8dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:text=""
-                android:textSize="18sp" />
         </LinearLayout>
 
     </LinearLayout>

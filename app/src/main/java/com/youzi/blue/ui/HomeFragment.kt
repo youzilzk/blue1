@@ -3,16 +3,18 @@ package com.youzi.blue.ui
 import android.accessibilityservice.AccessibilityService
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
-import android.widget.ListView
 import android.widget.SimpleAdapter
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
+import com.baoyz.swipemenulistview.SwipeMenuCreator
+import com.baoyz.swipemenulistview.SwipeMenuItem
 import com.youzi.blue.R
 import com.youzi.blue.service.BlueService
 import com.youzi.blue.utils.LoggerFactory
@@ -70,9 +72,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        val rootView = inflater.inflate(R.layout.fragment_home, container, false)
-        return rootView
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
 
@@ -91,15 +91,18 @@ class HomeFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v) {
             addDevice -> {
-                val intent = Intent(
-                    context, AddDialog::class.java
-                )
+                val intent = Intent(context, EditDialog::class.java)
+                val bundle = Bundle()
+
+                //添加的type为2
+                bundle.putInt("type", 1)
+                intent.putExtras(bundle)
                 startActivity(intent)
             }
         }
     }
 
-    fun refreshData() {
+    private fun refreshData() {
         data.clear()
         val username = context?.getSharedPreferences("user", AccessibilityService.MODE_PRIVATE)
             ?.getString("username", null)
@@ -122,7 +125,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
                             val item: HashMap<String, Any> = HashMap()
                             //一行记录，包含多个控件
                             item["deviceImage"] = R.drawable.head_ico
-                            item["deviceName"] = i.get("username").toString()
+                            item["deviceName"] = i["username"].toString()
                             item["description"] = "俄国人为符合规范鹅嘎王菲和瑞特个人房屋我和如果文特人格奉化人提供服务和如果无法和各位"
 
                             val state = i["state"] as Int
@@ -141,14 +144,61 @@ class HomeFragment : Fragment(), View.OnClickListener {
             })
     }
 
-    fun showListView() {
-        val listView = activity?.findViewById(R.id.listView) as ListView
+    private fun addListItemSlide() {
+        //左划操作
+        val create = SwipeMenuCreator { menu ->
+            val editItem = SwipeMenuItem(activity)
+            editItem.background = ColorDrawable(Color.rgb(255, 165, 0))
+            editItem.width = dip2px(90f)
+            editItem.title = "编辑"
+            editItem.titleSize = 18
+            editItem.titleColor = Color.WHITE
+            menu.addMenuItem(editItem)
+
+            val deleteItem = SwipeMenuItem(activity)
+            deleteItem.background = ColorDrawable(Color.RED)
+            deleteItem.width = dip2px(90f)
+            deleteItem.title = "删除"
+            deleteItem.titleSize = 18
+            deleteItem.titleColor = Color.WHITE
+            menu.addMenuItem(deleteItem)
+        }
+        listView.setMenuCreator(create)
+
+        //左划菜单事件
+        listView.setOnMenuItemClickListener { i, _, menuItem ->
+            val item = data[i]
+            when (menuItem) {
+                0 -> {
+                    val intent = Intent(context, EditDialog::class.java)
+                    val bundle = Bundle()
+
+                    //编辑的type为2
+                    bundle.putInt("type", 2)
+                    bundle.putString("watchUser", item["deviceName"].toString())
+
+                    intent.putExtras(bundle)
+                    startActivity(intent)
+                }
+                1 -> {
+                    Toast.makeText(
+                        context, "delete " + item["deviceName"], Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            false
+        }
+    }
+
+    private fun showListView() {
+        //列表项左样式
+        addListItemSlide()
 
         simpleAdapter = SimpleAdapter(
             context,
             data,
-            R.layout.listviewitems,
-            arrayOf<String>("deviceImage", "deviceName", "description", "state"),
+            R.layout.listview_items,
+            arrayOf("deviceImage", "deviceName", "description", "state"),
             intArrayOf(R.id.device_image, R.id.device_name, R.id.description, R.id.state)
         )
         //foot设置优雅的分割线
@@ -179,4 +229,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    private fun dip2px(dpValue: Float): Int {
+        val scale = context!!.resources.displayMetrics.density
+        return (dpValue * scale + 0.5f).toInt()
+    }
 }
