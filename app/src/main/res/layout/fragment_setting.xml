@@ -53,7 +53,7 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:gravity="center"
                     android:text="验证码"
                     android:textColor="@color/mainTextColor" />
@@ -62,7 +62,7 @@
                     android:id="@+id/tokenBox"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:layout_weight="3"
+                    android:layout_weight="4"
                     android:background="@drawable/textview_border"
                     android:gravity="center"
                     android:textColor="#DD95D4" />
@@ -71,7 +71,7 @@
                     android:id="@+id/bt_04"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:gravity="center"
                     android:text="编辑"
                     android:textColor="#F44336"
@@ -81,7 +81,7 @@
                     android:id="@+id/bt_05"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:gravity="center"
                     android:text="提交"
                     android:textSize="12sp" />
@@ -90,7 +90,7 @@
                     android:id="@+id/bt_06"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:gravity="center"
                     android:text="刷新"
                     android:textSize="12sp" />
