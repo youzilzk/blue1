@@ -3,5 +3,6 @@
     <string name="welcome">欢迎使用本软件, 请不要用于非法用途, 合理上网, 人人有责\n有关技术问题请联系1290240016@qq.com！</string>
     <string name="app_back_last">再按一次返回！</string>
     <string name="device_offline">设备不在线!</string>
+    <string name="device_no_permit">目标设备验证码可能已更改,请重新验证!</string>
     <string name="base_service_offline">请先去设置开启基础服务!</string>
 </resources>

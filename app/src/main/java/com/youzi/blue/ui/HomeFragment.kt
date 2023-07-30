@@ -128,7 +128,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
                             val state = i["state"] as Int
                             if (state == 1) item["state"] = R.drawable.state_green
                             else if (state == 0) item["state"] = R.drawable.state_gray
-                            else item["state"] = R.drawable.state_yellow
+                            else if (state == 2) item["state"] = R.drawable.state_yellow
 
                             data.add(item)
                         }
@@ -179,8 +179,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 }
                 1 -> {
                     OkHttp.getInstance()
-                        .httpGet(
-                            "http://61.243.3.19:5000/user/deleteWatchUser?username=$username&watchUser=$watchUser",
+                        .httpGet("http://61.243.3.19:5000/user/deleteWatchUser?username=$username&watchUser=$watchUser",
                             object : Callback {
                                 override fun onFailure(call: Call, e: IOException) {
                                     Toast.makeText(
@@ -195,9 +194,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
                                     activity?.runOnUiThread {
                                         Toast.makeText(
-                                            context,
-                                            message.toString(),
-                                            Toast.LENGTH_SHORT
+                                            context, message.toString(), Toast.LENGTH_SHORT
                                         ).show()
                                     }
 
@@ -234,8 +231,13 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 return@setOnItemClickListener
             }
             val state = data[i]["state"]
-            if (state != R.drawable.state_green) {
+            if (state == R.drawable.state_gray) {
                 Toast.makeText(context, getText(R.string.device_offline), Toast.LENGTH_SHORT).show()
+                return@setOnItemClickListener
+            }
+            if (state == R.drawable.state_yellow) {
+                Toast.makeText(context, getText(R.string.device_no_permit), Toast.LENGTH_SHORT)
+                    .show()
                 return@setOnItemClickListener
             }
 
