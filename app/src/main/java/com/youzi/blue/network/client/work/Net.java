@@ -1,6 +1,7 @@
 package com.youzi.blue.network.client.work;
 
 import com.youzi.blue.network.client.handlers.ClientChannelHandler;
+import com.youzi.blue.network.client.handlers.IdleCheckHandler;
 import com.youzi.blue.network.common.protocol.Message;
 import com.youzi.blue.network.common.protocol.MessageDecoder;
 import com.youzi.blue.network.common.protocol.MessageEncoder;
@@ -45,7 +46,7 @@ public class Net {
 
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
-                        if (sslEnable){
+                        if (sslEnable) {
                             //ssl加密
                             SSLContext sslContext = SslContextCreator.getSSLContext();
                             SSLEngine sslEngine = sslContext.createSSLEngine();
@@ -56,6 +57,7 @@ public class Net {
                         ch.pipeline().addLast(new MessageDecoder());
                         ch.pipeline().addLast(new MessageEncoder());
                         ch.pipeline().addLast(new ClientChannelHandler());
+                        ch.pipeline().addLast(new IdleCheckHandler());
 
                     }
                 });
