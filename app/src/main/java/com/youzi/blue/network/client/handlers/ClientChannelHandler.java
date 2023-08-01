@@ -2,6 +2,7 @@ package com.youzi.blue.network.client.handlers;
 
 
 import com.youzi.blue.network.client.manager.Manager;
+import com.youzi.blue.network.common.protocol.Constants;
 import com.youzi.blue.network.common.protocol.Message;
 import com.youzi.blue.service.BlueService;
 import com.youzi.blue.utils.LoggerFactory;
@@ -32,6 +33,9 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
                 break;
             case LINKCHECK:
                 handleLinkCheckMessage(ctx, message);
+                break;
+            case RECONNECTED:
+                handleReconnectedMessage(ctx, message);
                 break;
             default:
                 break;
@@ -70,6 +74,20 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
 
     private void handleLinkCheckMessage(ChannelHandlerContext ctx, Message message) {
         log.info("检查链路结果[{}]", new String(message.getData()));
+    }
+
+
+    private void handleReconnectedMessage(ChannelHandlerContext ctx, Message message) {
+        if (message.getContent().equals(Constants.STATE.REQUEST.value)) {
+            log.info("重连网络!");
+        }
+        BlueService blueService = BlueService.instace;
+        try {
+            blueService.getClientChannel().close().sync();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        blueService.tryReConnected();
     }
 
     @Override

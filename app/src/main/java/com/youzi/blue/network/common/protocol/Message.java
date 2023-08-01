@@ -25,7 +25,9 @@ public class Message {
 
         LINKCHECK(7),
 
-        CLOSECHANNEL(8);
+        CLOSECHANNEL(8),
+
+        RECONNECTED(9);
 
         public final byte value;
 
