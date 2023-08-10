@@ -27,7 +27,9 @@ public class Message {
 
         CLOSECHANNEL(8),
 
-        RECONNECTED(9);
+        RECONNECTED(9),
+
+        DATACHANGE(10);
 
         public final byte value;
 

@@ -76,6 +76,21 @@ class HomeFragment : Fragment(), View.OnClickListener {
     override fun onResume() {
         super.onResume()
         refreshData()
+
+        //监听数据变化
+        BlueService.deviceStateChange.observe(activity!!) {
+            for (datum in data) {
+                if (datum["watcherUser"]?.equals(it["username"]) == true) {
+                    when (it["state"] as Int) {
+                        1 -> datum["state"] = R.drawable.state_green
+                        0 -> datum["state"] = R.drawable.state_gray
+                        2 -> datum["state"] = R.drawable.state_yellow
+                    }
+                    break
+                }
+            }
+            simpleAdapter.notifyDataSetChanged()
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

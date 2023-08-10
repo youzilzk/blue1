@@ -1,11 +1,18 @@
 package com.youzi.blue.network.client.handlers;
 
 
+import android.os.Build;
+
+import com.alibaba.fastjson.JSONObject;
 import com.youzi.blue.network.client.manager.Manager;
 import com.youzi.blue.network.common.protocol.Constants;
 import com.youzi.blue.network.common.protocol.Message;
 import com.youzi.blue.service.BlueService;
 import com.youzi.blue.utils.LoggerFactory;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.HashMap;
 
 import io.netty.channel.*;
 
@@ -36,6 +43,9 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
                 break;
             case RECONNECTED:
                 handleReconnectedMessage(ctx, message);
+                break;
+            case DATACHANGE:
+                handleDataChangeMessage(ctx, message);
                 break;
             default:
                 break;
@@ -76,6 +86,11 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Message> {
         log.info("检查链路结果[{}]", new String(message.getData()));
     }
 
+
+    private void handleDataChangeMessage(ChannelHandlerContext ctx, Message message) {
+        HashMap value = JSONObject.parseObject(new String(message.getData()), HashMap.class);
+        BlueService.instace.deviceStateChange(value);
+    }
 
     private void handleReconnectedMessage(ChannelHandlerContext ctx, Message message) {
         if (message.getContent().equals(Constants.STATE.REQUEST.value)) {
