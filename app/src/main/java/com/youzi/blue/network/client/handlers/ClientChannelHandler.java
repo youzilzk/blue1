@@ -1,7 +1,6 @@
 package com.youzi.blue.network.client.handlers;
 
 
-import android.os.Build;
 
 import com.alibaba.fastjson.JSONObject;
 import com.youzi.blue.network.client.manager.Manager;
@@ -9,9 +8,6 @@ import com.youzi.blue.network.common.protocol.Constants;
 import com.youzi.blue.network.common.protocol.Message;
 import com.youzi.blue.service.BlueService;
 import com.youzi.blue.utils.LoggerFactory;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.HashMap;
 
 import io.netty.channel.*;

@@ -10,12 +10,10 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.BitmapFactory
-import android.graphics.PixelFormat
 import android.media.projection.MediaProjection
 import android.os.Build
 import android.os.IBinder
 import android.os.Process
-import android.util.DisplayMetrics
 import android.view.*
 import android.view.accessibility.AccessibilityEvent
 import androidx.annotation.RequiresApi
@@ -23,8 +21,6 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.MutableLiveData
-import com.youzi.blue.R
 import com.youzi.blue.io.SendServerThread
 import com.youzi.blue.network.client.work.Net
 import com.youzi.blue.network.common.protocol.Constants
@@ -34,19 +30,16 @@ import com.youzi.blue.threads.VideoRecorder
 import com.youzi.blue.utils.LoggerFactory
 import com.youzi.blue.utils.SingleLiveData
 import io.netty.channel.Channel
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-
 
 class BlueService : AccessibilityService(), LifecycleOwner {
     private val log = LoggerFactory.getLogger()
     private lateinit var username: String
 
-    private lateinit var windowManager: WindowManager
+//    private lateinit var windowManager: WindowManager
 
     var clientChannel: Channel? = null
 
-    private var floatRootView: View? = null//悬浮窗View
+//    private var floatRootView: View? = null//悬浮窗View
 
     /************************/
     companion object {
@@ -225,43 +218,43 @@ class BlueService : AccessibilityService(), LifecycleOwner {
     }
 
 
-    @SuppressLint("ClickableViewAccessibility", "InflateParams")
-    private fun showWindow() {
-        // 设置LayoutParam
-        windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+    /* @SuppressLint("ClickableViewAccessibility", "InflateParams")
+     private fun showWindow() {
+         // 设置LayoutParam
+         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
 
-        //屏幕宽高
-        val metrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(metrics)
-        screen_width = metrics.widthPixels
-        screen_height = metrics.heightPixels
+         //屏幕宽高
+         val metrics = DisplayMetrics()
+         windowManager.defaultDisplay.getMetrics(metrics)
+         screen_width = metrics.widthPixels
+         screen_height = metrics.heightPixels
 
-        val layoutParam = WindowManager.LayoutParams()
-        layoutParam.apply {
-            //显示的位置
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
-                //刘海屏延伸到刘海里面
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    layoutInDisplayCutoutMode =
-                        WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-                }
-            } else {
-                type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
-            }
-            flags =
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            width = 1
-            height = 1
-            format = PixelFormat.TRANSPARENT
-            x = screen_width
-            y = screen_height / 10
-        }
-        floatRootView = LayoutInflater.from(this).inflate(R.layout.activity_float_item, null)
-        //floatRootView?.setOnTouchListener(ItemViewTouchListener(layoutParam, windowManager))
-        windowManager.addView(floatRootView, layoutParam)
-    }
-
+         val layoutParam = WindowManager.LayoutParams()
+         layoutParam.apply {
+             //显示的位置
+             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                 type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
+                 //刘海屏延伸到刘海里面
+                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                     layoutInDisplayCutoutMode =
+                         WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                 }
+             } else {
+                 type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
+             }
+             flags =
+                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+             width = 1
+             height = 1
+             format = PixelFormat.TRANSPARENT
+             x = screen_width
+             y = screen_height / 10
+         }
+         floatRootView = LayoutInflater.from(this).inflate(R.layout.activity_float_item, null)
+         //floatRootView?.setOnTouchListener(ItemViewTouchListener(layoutParam, windowManager))
+         windowManager.addView(floatRootView, layoutParam)
+     }
+ */
     fun startSendServer() {
         log.info(mediaProjection.toString())
         setNotification()
