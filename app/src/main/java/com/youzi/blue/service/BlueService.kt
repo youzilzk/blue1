@@ -32,6 +32,7 @@ import com.youzi.blue.network.common.protocol.Message
 import com.youzi.blue.service.ScreenListener.ScreenStateListener
 import com.youzi.blue.threads.VideoRecorder
 import com.youzi.blue.utils.LoggerFactory
+import com.youzi.blue.utils.SingleLiveData
 import io.netty.channel.Channel
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -55,10 +56,10 @@ class BlueService : AccessibilityService(), LifecycleOwner {
         var netWorkTryTimes: Int = -1
 
         //无障碍服务运行状态
-        var isAccessibilityRunning = MutableLiveData<Boolean>()
+        var isAccessibilityRunning = SingleLiveData<Boolean>()
 
         //观察设备在线状态变化
-        var deviceStateChange = MutableLiveData<HashMap<String, Any>>()
+        var deviceStateChange = SingleLiveData<HashMap<String, Any>>()
     }
 
     private var mediaProjection: MediaProjection? = null
@@ -91,7 +92,6 @@ class BlueService : AccessibilityService(), LifecycleOwner {
 
     /***************监听息屏和亮屏****************/
     private lateinit var screenListener: ScreenListener
-
 
 
     @RequiresApi(Build.VERSION_CODES.O)
