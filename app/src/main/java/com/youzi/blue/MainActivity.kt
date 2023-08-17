@@ -35,8 +35,8 @@ class MainActivity : AppCompatActivity() {
         this.getSupportActionBar()?.hide();
         Manager.initContext(applicationContext)
 
-        var userPreferences: SharedPreferences = getSharedPreferences("user", MODE_PRIVATE)
-        val username: String = userPreferences.getString("username", "") as String
+        val username: String =
+            getSharedPreferences("user", MODE_PRIVATE).getString("username", "") as String
         if (username.equals("")) {
             //未登录, 直接跳转到LoginActivity
             val intent = Intent(this@MainActivity, LoginActivity::class.java)
@@ -92,10 +92,5 @@ class MainActivity : AppCompatActivity() {
                 )
             )
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        this.finish()
     }
 }

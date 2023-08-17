@@ -31,7 +31,6 @@ import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    SharedPreferences userPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                             if ((Boolean) jo.get("result")) {
                                 showText = "登录成功!";
                                 //修改本地存储为已登录
-                                userPreferences.edit().putString("username", etUsername).apply();
+                                getSharedPreferences("user", MODE_PRIVATE).edit().putString("username", etUsername).apply();
 
                                 //退出登录并重新登录时, blue服务可能在运行, 就更新用户信息, 重新联网
                                 if (Help.INSTANCE.isAccessibilityRunning(LoginActivity.this)) {
@@ -106,29 +105,20 @@ public class LoginActivity extends AppCompatActivity {
                             } else {
                                 showText = "登陆失败!" + jo.get("message");
                             }
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    login_show.setText(showText);
-                                    try {
-                                        Thread.sleep(3000);
-                                    } catch (InterruptedException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                    login_show.setText("");
+                            new Thread(() -> {
+                                login_show.setText(showText);
+                                try {
+                                    Thread.sleep(3000);
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
                                 }
+                                login_show.setText("");
                             }).start();
                         }
                     });
                 }
             }
         });
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        this.finish();
     }
 
 }

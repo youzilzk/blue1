@@ -101,17 +101,14 @@ public class RegisterActivity extends AppCompatActivity {
                             } else {
                                 showText = "注册失败!" + jo.get("message");
                             }
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    show_message.setText(showText);
-                                    try {
-                                        Thread.sleep(3000);
-                                    } catch (InterruptedException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                    show_message.setText("");
+                            new Thread(() -> {
+                                show_message.setText(showText);
+                                try {
+                                    Thread.sleep(3000);
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
                                 }
+                                show_message.setText("");
                             }).start();
                         }
                     });
@@ -129,11 +126,5 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             return false;
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        this.finish();
     }
 }
