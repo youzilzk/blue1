@@ -38,15 +38,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        userPreferences = getSharedPreferences("user", MODE_PRIVATE);
-        String username = userPreferences.getString("username", null);
-        if (username != null) {
-            //已经登录, 直接跳转到Mainactivity
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            //关闭登录页面
-            LoginActivity.this.finish();
-        }
 
         Button btn_login = findViewById(R.id.btn_login);
         EditText et_userName = findViewById(R.id.et_username);
@@ -134,5 +125,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        this.finish();
+    }
 
 }

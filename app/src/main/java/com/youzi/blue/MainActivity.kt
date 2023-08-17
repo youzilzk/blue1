@@ -3,6 +3,7 @@ package com.youzi.blue
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -15,10 +16,10 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.youzi.blue.network.client.manager.Manager
-import com.youzi.blue.service.BlueService
 import com.youzi.blue.ui.HomeFragment
 import com.youzi.blue.ui.SettingFragment
 import com.youzi.blue.ui.SignActivity
+import com.youzi.blue.ui.login.LoginActivity
 import com.youzi.blue.utils.Help
 
 
@@ -33,6 +34,16 @@ class MainActivity : AppCompatActivity() {
         //隐藏自带的标题栏,自己画一个, 为了在标题栏上带"+"号,设置页也需要自己画,因为共用了一个activity
         this.getSupportActionBar()?.hide();
         Manager.initContext(applicationContext)
+
+        var userPreferences: SharedPreferences = getSharedPreferences("user", MODE_PRIVATE)
+        val username: String = userPreferences.getString("username", "") as String
+        if (username.equals("")) {
+            //未登录, 直接跳转到LoginActivity
+            val intent = Intent(this@MainActivity, LoginActivity::class.java)
+            startActivity(intent)
+            //关闭登录页面
+            this@MainActivity.finish()
+        }
 
         setContentView(R.layout.activity_main)
         initView()
@@ -81,5 +92,10 @@ class MainActivity : AppCompatActivity() {
                 )
             )
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        this.finish()
     }
 }

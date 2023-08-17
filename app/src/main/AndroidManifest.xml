@@ -31,17 +31,16 @@
 
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
-
-
-        <activity
-            android:name=".ui.login.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:exported="true" />
 
 
         <activity
@@ -54,7 +53,9 @@
         <activity
             android:name=".ui.WatchContent"
             android:exported="true" />
-        <activity android:name=".ui.EditDialog" android:theme="@style/AddDialogStyleTop" />
+        <activity
+            android:name=".ui.EditDialog"
+            android:theme="@style/AddDialogStyleTop" />
 
         <service
             android:name="com.youzi.blue.service.BlueService"

@@ -2,11 +2,7 @@ package com.youzi.blue.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.SurfaceHolder
-import android.view.SurfaceView
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.youzi.blue.MainActivity
@@ -30,6 +26,7 @@ class WatchContent : AppCompatActivity(), SurfaceHolder.Callback {
     override fun onPause() {
         super.onPause()
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        this.finish()
     }
 
     override fun onResume() {
@@ -107,5 +104,4 @@ class WatchContent : AppCompatActivity(), SurfaceHolder.Callback {
     override fun surfaceCreated(holder: SurfaceHolder?) {
         init()
     }
-
 }

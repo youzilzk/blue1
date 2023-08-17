@@ -130,4 +130,10 @@ public class RegisterActivity extends AppCompatActivity {
             return false;
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        this.finish();
+    }
 }
