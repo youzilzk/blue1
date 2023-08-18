@@ -139,7 +139,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
                             item["deviceImage"] = R.drawable.head_ico
                             item["watcherUser"] = i["username"].toString()
                             item["description"] =
-                                "有情风万里卷潮来，无情送潮归。问钱塘江上，西兴浦口，几度斜晖？不用思量今古，俯仰昔人非。记取西湖西畔，正暮山好处，空翠烟霏。算诗人相得，如我与君稀。"
+                                "有情风万里卷潮来，无情送潮归。问钱塘江上，西兴浦口，几度斜晖？不用思量今古，俯仰昔人非。"
 
                             val state = i["state"] as Int
                             if (state == 1) item["state"] = R.drawable.state_green
