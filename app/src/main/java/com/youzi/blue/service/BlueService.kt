@@ -194,8 +194,6 @@ class BlueService : AccessibilityService(), LifecycleOwner {
             Thread.sleep(10000)
             if (isNetworkUseful()) {
                 log.info("重连网络成功!")
-                //检测链路存活状态,netty闲置处理器有问题,所以用此方法
-
                 //如果网络重连次数netWorkTryTimes被置为-1,连接成功也关闭
                 if (netWorkTryTimes == -1) {
                     log.info("网络重连次数被置为-1,断开网络!")
@@ -356,7 +354,7 @@ class BlueService : AccessibilityService(), LifecycleOwner {
     /****************************************************************************/
     override fun onServiceConnected() {
         super.onServiceConnected()
-//        showWindow()
+        showWindow()
     }
 
     override fun getLifecycle(): Lifecycle = LifecycleRegistry(this)
