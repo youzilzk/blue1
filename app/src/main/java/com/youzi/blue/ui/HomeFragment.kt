@@ -234,9 +234,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showListView() {
-        if (data.size == 0) {
-            refreshData()
-        }
+        refreshData()
         //列表项左样式
         addListItemSlide()
 
