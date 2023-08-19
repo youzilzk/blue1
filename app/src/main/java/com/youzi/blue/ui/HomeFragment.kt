@@ -11,6 +11,7 @@ import android.widget.AdapterView
 import android.widget.SimpleAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
 import com.baoyz.swipemenulistview.SwipeMenuCreator
@@ -34,6 +35,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
     private val log = LoggerFactory.getLogger()
 
     private var username: String? = null
+    private var observeDataChange: Observer<HashMap<String, Any>>? = null
 
     //列表显示的数据
     private val data: ArrayList<HashMap<String, Any>> = ArrayList()
@@ -72,13 +74,9 @@ class HomeFragment : Fragment(), View.OnClickListener {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
-
     override fun onResume() {
         super.onResume()
-        refreshData()
-
-        //监听数据变化
-        BlueService.deviceStateChange.observe(activity!!) {
+        observeDataChange = Observer<HashMap<String, Any>>() {
             for (datum in data) {
                 if (datum["watcherUser"]?.equals(it["username"]) == true) {
                     when (it["state"] as Int) {
@@ -91,6 +89,15 @@ class HomeFragment : Fragment(), View.OnClickListener {
             }
             simpleAdapter.notifyDataSetChanged()
         }
+
+        //监听数据变化
+        BlueService.deviceStateChange.observe(activity!!, observeDataChange!!)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        //监听数据变化
+        BlueService.deviceStateChange.removeObserver(observeDataChange!!)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -100,6 +107,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
         showListView()
         //右上角添加设备按钮
         addDevice.setOnClickListener(this)
+
     }
 
     override fun onClick(v: View?) {
@@ -152,7 +160,6 @@ class HomeFragment : Fragment(), View.OnClickListener {
                     activity?.runOnUiThread {
                         simpleAdapter.notifyDataSetChanged()
                     }
-
                 }
             })
     }
@@ -227,6 +234,9 @@ class HomeFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showListView() {
+        if (data.size == 0) {
+            refreshData()
+        }
         //列表项左样式
         addListItemSlide()
 

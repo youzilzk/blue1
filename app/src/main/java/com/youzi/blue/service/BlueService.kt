@@ -10,7 +10,6 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.BitmapFactory
-import android.graphics.PixelFormat
 import android.graphics.PixelFormat.*
 import android.media.projection.MediaProjection
 import android.os.Build

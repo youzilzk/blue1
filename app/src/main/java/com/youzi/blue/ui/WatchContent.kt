@@ -89,7 +89,7 @@ class WatchContent : AppCompatActivity(), SurfaceHolder.Callback {
 //        voicePlayThread?.exit()
     }
 
-    fun sendStopCommand() {
+    private fun sendStopCommand() {
         BlueService.instace.sendStopCommand()
     }
 

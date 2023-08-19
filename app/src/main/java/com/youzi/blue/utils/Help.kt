@@ -40,7 +40,7 @@ object Help {
     private fun applyWriteAndRecordPermission(context: Activity) {
         ActivityCompat.requestPermissions(
             context,
-            arrayOf<String>(
+            arrayOf(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO
             ),
@@ -69,7 +69,7 @@ object Help {
      * 判断Service是否开启
      *
      */
-    fun isServiceRunning(context: Context, ServiceName: String): Boolean {
+    private fun isServiceRunning(context: Context, ServiceName: String): Boolean {
         if (TextUtils.isEmpty(ServiceName)) {
             return false
         }
@@ -103,7 +103,4 @@ object Help {
             accessibilityToSettingPage(context)
         }
     }
-
-    fun isNull(any: Any?): Boolean = any == null
-
 }

@@ -3,13 +3,8 @@ package com.youzi.blue.ui;
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,7 +32,7 @@ public class EditDialog extends Activity {
         @SuppressLint({"MissingInflatedId", "LocalSuppress"}) EditText watchUserB = findViewById(R.id.watchUser);
         @SuppressLint({"MissingInflatedId", "LocalSuppress"}) EditText tokenB = findViewById(R.id.token);
 
-        TextView upBoxTitle = (TextView) findViewById(R.id.upBoxTitle);
+        TextView upBoxTitle = findViewById(R.id.upBoxTitle);
         Bundle bundle = getIntent().getExtras();
 
         //编辑框: 1-添加,2-编辑
@@ -59,8 +54,8 @@ public class EditDialog extends Activity {
         //设置对话框activity的宽度等于屏幕宽度，一定要设置，不然对话框会显示不全
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        Button add = (Button) findViewById(R.id.add);
-        Button cancel = (Button) findViewById(R.id.cancel);
+        Button add = findViewById(R.id.add);
+        Button cancel = findViewById(R.id.cancel);
 
 
         add.setOnClickListener(v -> {
@@ -93,12 +88,7 @@ public class EditDialog extends Activity {
 
                     String showText = jo.getString("message");
 
-                    EditDialog.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(EditDialog.this, showText, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    EditDialog.this.runOnUiThread(() -> Toast.makeText(EditDialog.this, showText, Toast.LENGTH_SHORT).show());
                     //添加成功, 关闭对话框
                     if (Boolean.TRUE.equals(result)) {
                         finish();

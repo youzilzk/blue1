@@ -28,9 +28,7 @@ import okhttp3.Response
 import java.io.IOException
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link SettingFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * 设置页
  */
 class SettingFragment : Fragment(), View.OnClickListener {
     private val log = LoggerFactory.getLogger()
@@ -115,19 +113,24 @@ class SettingFragment : Fragment(), View.OnClickListener {
 
 
             bt_03 -> {
-                activity?.getSharedPreferences("user", Context.MODE_PRIVATE)?.edit()!!
-                    .putString("username", null).apply()
+                val sharedPreferences =
+                    activity?.getSharedPreferences("user", Context.MODE_PRIVATE)?.edit()
+                sharedPreferences?.putString("username", null)?.apply()
+                sharedPreferences?.putString("watchToken", null)?.apply()
+
                 //跳转到LoginActivity
                 val intent = Intent(activity, LoginActivity::class.java)
                 startActivity(intent)
                 //关闭主页面
                 activity?.finish()
             }
+
             bt_04 -> {
                 tokenBox.isFocusable = true
                 tokenBox.isFocusableInTouchMode = true
                 bt_05.isEnabled = true
             }
+
             bt_05 -> {
                 tokenBox.isFocusable = false
                 tokenBox.isFocusableInTouchMode = false
@@ -139,6 +142,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
                 }
                 updateToken(token)
             }
+
             bt_06 -> {
                 tokenBox.isFocusable = false
                 tokenBox.isFocusableInTouchMode = false
@@ -164,10 +168,17 @@ class SettingFragment : Fragment(), View.OnClickListener {
             override fun onResponse(call: Call, response: Response) {
                 val jo = JSONObject.parseObject(String(response.body().bytes()))
                 if ((jo["result"] as Boolean?)!!) {
-                    if (token == null) {
-                        val watchToken = jo["data"] as String
+                    var watchToken = token
+                    if (watchToken == null) {
+                        //token=null说明是请求服务器随机生成,否则说明是用户自定义的
+                        watchToken = jo["data"] as String
+
                         activity?.runOnUiThread { tokenBox.setText(watchToken) }
                     }
+                    //验证码本地存储
+                    activity?.getSharedPreferences("user", Context.MODE_PRIVATE)?.edit()
+                        ?.putString("watchToken", token)?.apply()
+
                     activity?.runOnUiThread { bt_05.isEnabled = false }
                 } else {
                     activity?.runOnUiThread {
@@ -184,22 +195,32 @@ class SettingFragment : Fragment(), View.OnClickListener {
         //禁止输入框
         tokenBox.isFocusable = false
         tokenBox.isFocusableInTouchMode = false
+        var watchToken = activity?.getSharedPreferences("user", AppCompatActivity.MODE_PRIVATE)
+            ?.getString("watchToken", "") as String
+        if (watchToken != "") {
+            tokenBox.setText(watchToken)
+        } else {
+            OkHttp.getInstance()
+                .httpGet(
+                    "http://61.243.3.19:5000/user/getToken?username=$username",
+                    object : Callback {
+                        override fun onFailure(call: Call, e: IOException) {
+                            log.info("网络错误!")
+                        }
 
-        OkHttp.getInstance()
-            .httpGet("http://61.243.3.19:5000/user/getToken?username=$username", object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    log.info("网络错误!")
-                }
-
-                @Throws(IOException::class)
-                override fun onResponse(call: Call, response: Response) {
-                    val jo = JSONObject.parseObject(String(response.body().bytes()))
-                    if ((jo["result"] as Boolean?)!!) {
-                        val watchToken = jo["data"] as String
-                        activity?.runOnUiThread { tokenBox.setText(watchToken) }
-                    }
-                }
-            })
+                        @Throws(IOException::class)
+                        override fun onResponse(call: Call, response: Response) {
+                            val jo = JSONObject.parseObject(String(response.body().bytes()))
+                            if ((jo["result"] as Boolean?)!!) {
+                                watchToken = jo["data"] as String
+                                //验证码本地存储
+                                activity?.getSharedPreferences("user", Context.MODE_PRIVATE)?.edit()
+                                    ?.putString("watchToken", watchToken)?.apply()
+                                activity?.runOnUiThread { tokenBox.setText(watchToken) }
+                            }
+                        }
+                    })
+        }
     }
 
     private fun startBaseService() {
@@ -211,7 +232,7 @@ class SettingFragment : Fragment(), View.OnClickListener {
     }
 
 
-    fun applyCapture() {
+    private fun applyCapture() {
         mediaProjectionManager =
             context?.getSystemService(AppCompatActivity.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         //开启录屏请求intent
