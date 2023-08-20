@@ -257,11 +257,11 @@ class BlueService : AccessibilityService(), LifecycleOwner {
     }
 
     fun startSendServer() {
-        log.info(mediaProjection.toString())
         setNotification()
         sendThread = SendThread()
         sendThread.start()
         try {
+            log.info("mediaProjection:  {}", mediaProjection.toString())
             videoRecorder = VideoRecorder(
                 sendThread, mediaProjection!!, screen_width, screen_height, 1920 * 1080, 15
             )
