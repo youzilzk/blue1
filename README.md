@@ -1,7 +1,7 @@
 ### android远程投屏客户端
 
 
-服务端地址[https://gitee.com/youzilzk/blue-server1.git](http://)
+服务端地址https://github.com/youzilzk/blue-server1.git
 
 - 请先部署服务端,有公网服务器最好
 - 客户端请用androidstudio打开编译
